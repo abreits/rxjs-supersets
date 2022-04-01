@@ -1,0 +1,24 @@
+{
+  "name": "rxjs-supersets",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "rxjs": ">6.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "description": "A collection of Typescript Maps and Sets that publish changes in their state (items added, modified or deleted) using RxJS Observables.",
+  "keywords": [
+    "rxjs",
+    "typescript",
+    "superset",
+    "deltamap",
+    "deltaset",
+    "delta",
+    "set",
+    "map",
+    "observable"
+  ],
+  "author": "Ab Reitsma",
+  "license": "MIT"
+}

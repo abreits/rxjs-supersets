@@ -1,0 +1,37 @@
+# `processDelta(handlerFunctions?)`
+
+The `processDelta` RxJS operator processes `MapDelta` updates.
+It makes sure that the first result always contains all map items in the `added` field.
+
+[back to main](../../README.md)
+
+The optional `handlerFunctions` parameter has the following structure:
+
+``` typescript
+handlerFunctions?: {
+  add?: (value: V) => void,
+  delete?: (Value: V) => void,
+  modify?: (value: V) => void,
+  before?: () => void,
+  after?: () => void
+}
+```
+
+Function of the handler structure members:
+
+- `add`: the function is called for every item in the `mapDelta.added` set.
+- `delete`: the function is called for every item in the `mapDelta.deleted` set.
+- `modify`: the function is called for every item in the `mapDelta.modified` set.
+- `before`: the function is called only once, before all `add`, `delete` and `modify` calls.
+- `after`: the function is called only once, after all `add`, `delete` and `modify` calls.
+
+The order in which the methods are handled is:
+
+- `before` once
+- `delete` once for every `deleted` item
+- `modify` once fore every `added` item
+- `add` once for every `added` item
+- `after` once
+
+
+[back to top](#processdeltahandlerfunctions)
