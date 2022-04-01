@@ -16,7 +16,7 @@ A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that
   - [settings example](#settings-example)
   - [SuperSet and SimpleSuperSet example](#superset-and-simplesuperset-example)
 - [Version history](#version-history)
-  - [1.0.0](#100)
+  - [0.9.0](#090)
 # Introduction
 
 `rxjs-supersets` contains a number of Typescript `Map` and `Set` subclasses that have an [RxJS](https://rxjs.dev/) `Observable` property `delta$` that you can subscribe to if you want to be informed of the changes taking place in the `Set` or `Map`. It keeps track of addition, modification and deletion of items in the `Set` or `Map`.
@@ -287,5 +287,5 @@ superset.subsets.delete('subset1');
 
 # Version history
 
-## 1.0.0
+## 0.9.0
 - Initial public version
