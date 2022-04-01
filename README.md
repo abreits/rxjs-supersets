@@ -2,6 +2,8 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.0.
 
+The library code itself can be found in the [projects/rxjs-supersets](projects/rxjs-supersets) directory.
+
 ## Why us Angular Cli for this library
 
 [Angular CLI](https://github.com/angular/angular-cli) provides an easy way to setup the scaffolding for the generic rxjs-supersets Typescript library that just works out of the box.

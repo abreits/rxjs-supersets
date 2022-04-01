@@ -11,7 +11,6 @@
     "coverage": "ng test --code-coverage",
     "test-ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless --code-coverage",
     "build-ci": "npm run lint && npm run test-ci && ng build"
-    
   },
   "private": true,
   "dependencies": {

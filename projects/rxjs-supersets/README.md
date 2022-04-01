@@ -127,7 +127,7 @@ deltaMap.delta$.pipe(processDelta({
   before: () => initUpdate(),     // call before update processing (optional)
   add: item => doAdd(item),       // processes both items one at a time (optional)
   modify: item => doModify(item), // ignored because there are no items to process (optional)
-  delete: item => doDelete(item)  // ignored because there are no items to process (optional)
+  delete: item => doDelete(item), // ignored because there are no items to process (optional)
   after: () => completeUpdate()   // call after update processing (optional)
 })).subscribe();
 ```

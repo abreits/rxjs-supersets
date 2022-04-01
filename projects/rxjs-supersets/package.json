@@ -19,6 +19,14 @@
     "map",
     "observable"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abreits/rxjs-supersets.git"
+  },
   "author": "Ab Reitsma",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abreits/rxjs-supersets/issues"
+  },
+  "homepage": "https://github.com/abreits/rxjs-supersets/blob/main/projects/rxjs-supersets/README.md"
 }
