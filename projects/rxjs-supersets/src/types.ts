@@ -21,10 +21,15 @@ export interface ReadonlyDeltaMap<K, V> extends ReadonlyMap<K, V> {
   readonly delta$: DeltaObservable<K, V>;
 }
 
-export interface SubsetMap<K, V> extends ReadonlyMap<K, V> {
+export interface SimpleSubsetMap<K, V> extends ReadonlyMap<K, V> {
   get(key: K): V;
   empty(key: K): void;
   delete(key: K): void;
+}
+
+export interface SubsetMap<K, V> extends SimpleSubsetMap<K, V> {
+  pauseDeltas(): void;
+  resumeDeltas(): void;
 }
 
 export interface MapDelta<K, V> {

@@ -305,9 +305,9 @@ describe('SuperSet', () => {
       });
     });
 
-    describe('pauseSubSetUpdates and resumeSubSetUpdates', () => {
-      it('should combine SubSet updates while they are paused', () => {
-        test.pauseSubsetDeltas();
+    describe('pause subset updates and resume subset updates', () => {
+      it('should combine subset updates while they are paused', () => {
+        test.subsets.pauseDeltas();
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -324,7 +324,7 @@ describe('SuperSet', () => {
         test.delete(testContent3.id);
         test.delete(testContent3.id);
 
-        test.resumeSubsetDeltas();
+        test.subsets.resumeDeltas();
 
         expect(SubSet1delta$Updates.length).toEqual(1);
         expect(SubSet1Results).toEqual([]);

@@ -16,6 +16,7 @@ A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that
   - [settings example](#settings-example)
   - [SuperSet and SimpleSuperSet example](#superset-and-simplesuperset-example)
 - [Version history](#version-history)
+  - [0.10.0](#0100)
   - [0.9.0](#090)
 # Introduction
 
@@ -287,5 +288,18 @@ superset.subsets.delete('subset1');
 
 # Version history
 
+## 0.10.0
+- Added `subsets.pauseDeltas()` and `subsets.resumeDeltas()` for `SuperSet`
+- Deprecated `pauseSubsetDeltas()` and `resumeSubsetDeltas()` for `SuperSet`
+- Fixed `subsets.size` property for `Superset` and `SimpleSuperSet`
+- Optimized `subsets` for `Superset` and `SimpleSuperSet`
+- Updated documentation
+- TODO: 
+  - Improve documentation 
+  - Add more examples
+
 ## 0.9.0
 - Initial public version
+- TODO: 
+  - Improve documentation
+  - Add more examples

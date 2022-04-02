@@ -18,6 +18,25 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
   protected isModifiedSubSet?: IsModified<V>;
   protected publishEmptySubSet!: boolean;
 
+  /**
+   * The subsetMap, containing all subset specific methods and properties
+   * 
+   */
+  readonly subsets: SubsetMap<M, ReadonlyDeltaMap<K, V>> = {
+    get: key => this.getSubSet(key),
+    entries: () => this._subsets.entries(),
+    forEach: fn => this._subsets.forEach(fn),
+    has: key => this._subsets.has(key),
+    keys: () => this._subsets.keys(),
+    size: 0, // getter replaced in constructor
+    values: () => this._subsets.values(),
+    [Symbol.iterator]: () => this._subsets[Symbol.iterator](),
+    empty: key => this.emptySubSet(key),
+    delete: key => this.deleteSubSet(key),
+    pauseDeltas: () => this.pauseSubsetDeltas(),
+    resumeDeltas: () => this.resumeSubsetDeltas()
+  };
+
   constructor();
   constructor(map: Iterable<Iterable<any>>);
   constructor(settings?: SuperSetSettings<V>);
@@ -30,27 +49,11 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
     if (this.publishEmptySubSet === undefined) {
       this.publishEmptySubSet = true;
     }
-  }
 
-  /**
-   * Returns the readonly map containing all active subsets.
-   * 
-   * _subsets.get(subsetId)_ always returns a value. 
-   * If no subset exists, a new empty subset with the defined _subsetId_ will be created.
-   */
-  get subsets(): SubsetMap<M, ReadonlyDeltaMap<K, V>> {
-    return {
-      get: key => this.getSubSet(key),
-      entries: () => this._subsets.entries(),
-      forEach: fn => this._subsets.forEach(fn),
-      has: key => this._subsets.has(key),
-      keys: () => this._subsets.keys(),
-      size: this._subsets.size,
-      values: () => this._subsets.values(),
-      [Symbol.iterator]: () => this._subsets[Symbol.iterator](),
-      empty: key => this.emptySubSet(key),
-      delete: key => this.deleteSubSet(key)
-    };
+    // pass through the _subsets.size to subsets.size
+    Object.defineProperty(this.subsets, 'size', {
+      get: () => this._subsets.size
+    });
   }
 
   /**
@@ -79,6 +82,9 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
 
   /**
    * pause all SubSet delta$ updates
+   * 
+   * @deprecated, use `superSet.subset.pauseDeltas()` instead
+   * 
    */
   public pauseSubsetDeltas(): void {
     this.doPauseSubsetDeltas();
@@ -93,6 +99,8 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
 
   /**
    * resume all SubSet delta$ updates
+   * 
+   * @deprecated, use `superSet.subset.resumeDeltas()` instead
    */
   resumeSubsetDeltas(): void {
     this.publishSubSetUpdates = true;

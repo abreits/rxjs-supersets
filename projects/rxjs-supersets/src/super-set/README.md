@@ -15,12 +15,12 @@ The SuperSet also allows you to subscribe to changes of a specific subset by sub
   - [`constructor`](#constructor)
   - [`add(item: T, addExistingSubSets = false)`](#additem-t-addexistingsubsets--false)
   - [`deleteSubSetItems(subSetId: SubSetId): void`](#deletesubsetitemssubsetid-subsetid-void)
-  - [`pauseSubSetDeltas()`](#pausesubsetdeltas)
-  - [`resumeSubSetDeltas()`](#resumesubsetdeltas)
   - [`subsets: SubsetMap<SubsetId, ReadonlyDeltaMap<ItemId, Item>>`](#subsets-subsetmapsubsetid-readonlydeltamapitemid-item)
   - [`subsets.get(SubsetId): ReadonlyDeltaMap<ItemId, Item>>`](#subsetsgetsubsetid-readonlydeltamapitemid-item)
   - [`subsets.empty(subSetId: SubSetId): void`](#subsetsemptysubsetid-subsetid-void)
   - [`subsets.delete(subSetId: SubSetId): void`](#subsetsdeletesubsetid-subsetid-void)
+  - [`subsets.pauseDeltas()`](#subsetspausedeltas)
+  - [`subsets.resumeDeltas()`](#subsetsresumedeltas)
 
 [back to main](../../README.md)
 
@@ -67,24 +67,6 @@ Sends an update to all `SubSet`'s that have elements removed.
 [back to top](#superset----omit-in-toc)
 </li></ul>
 
-### `pauseSubSetDeltas()`
-<ul><li style="list-style-type: none;">
-
-Pauses the category updates for all categories of the `SuperSet`.
-Changes will be collected, but updates will only be sent after `resumeSubSetDeltas()` is called.
-This can be used to reduce the number of delta$ updates published.
-
-[back to top](#superset----omit-in-toc)
-</li></ul>
-
-### `resumeSubSetDeltas()`
-<ul><li style="list-style-type: none;">
-
-Resumes a the category updates again after a `pauseSubSetDeltas()`.
-
-[back to top](#superset----omit-in-toc)
-</li></ul>
-
 ### `subsets: SubsetMap<SubsetId, ReadonlyDeltaMap<ItemId, Item>>`
 <ul><li style="list-style-type: none;">
 
@@ -117,6 +99,24 @@ the `SuperSet.delta$` itself.
 <ul><li style="list-style-type: none;">
 
 Does a `clearSubSet`, followed by `complete`-ing all its subscriptions and finally deleting the category from the `SuperSet`.
+
+[back to top](#superset----omit-in-toc)
+</li></ul>
+
+### `subsets.pauseDeltas()`
+<ul><li style="list-style-type: none;">
+
+Pauses the category updates for all categories of the `SuperSet`.
+Changes will be collected, but updates will only be sent after `subsets.resumeDeltas()` is called.
+This can be used to reduce the number of delta$ updates published.
+
+[back to top](#superset----omit-in-toc)
+</li></ul>
+
+### `subsets.resumeDeltas()`
+<ul><li style="list-style-type: none;">
+
+Resumes the category updates again after a `subsets.pauseDeltas()`.
 
 [back to top](#superset----omit-in-toc)
 </li></ul>

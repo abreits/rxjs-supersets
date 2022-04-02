@@ -11,7 +11,7 @@
     "coverage": "ng test --code-coverage",
     "test-ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless --code-coverage",
     "build-ci": "npm run lint && npm run test-ci && ng build",
-    "publish": "npm publish dist/rxjs-supersets"
+    "publish": "npm run build-ci && npm publish dist/rxjs-supersets"
   },
   "private": true,
   "dependencies": {
