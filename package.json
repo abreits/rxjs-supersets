@@ -1,5 +1,5 @@
 {
-  "name": "rxjs-supersets",
+  "name": "rxjs-supersets-buildpack",
   "version": "0.9.0",
   "scripts": {
     "ng": "ng",

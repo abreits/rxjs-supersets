@@ -7,10 +7,10 @@ import { MemberObject, DeltaObservable, MapDelta } from '../types';
 import { SuperSet } from './super-set';
 
 // debugging support function
-// function printSubSet(SubSet: any) {
-//   console.log('added:', [...SubSet.added.keys()])
-//   console.log('deleted:', [...SubSet.deleted.keys()])
-//   console.log('modified:', [...SubSet.modified.keys()])
+// function printSubSet(subset: any) {
+//   console.log('created:', [...subset.created.keys()])
+//   console.log('deleted:', [...subset.deleted.keys()])
+//   console.log('updated:', [...subset.updated.keys()])
 // }
 
 class ContentClass implements MemberObject {
@@ -32,9 +32,9 @@ describe('SuperSet', () => {
   function subscribeHandlers(observable: DeltaObservable<string, MemberObject>, results: string[]): void {
     subscriptions.push(
       observable.pipe(processDelta({
-        add: (entry: any) => results.push(`add:${entry.id}`),
+        create: (entry: any) => results.push(`add:${entry.id}`),
         delete: (entry: any) => results.push(`delete:${entry.id}`),
-        modify: (entry: any) => results.push(`modify:${entry.id}`)
+        update: (entry: any) => results.push(`modify:${entry.id}`)
       })).subscribe()
     );
   }
@@ -57,22 +57,22 @@ describe('SuperSet', () => {
   describe('constructor', () => {
     it('should create with the various subsets settings', () => {
       const test1 = new SuperSet();
-      // quick test if the protected SubSet settings are correctly set ()
+      // quick test if the protected subset settings are correctly set ()
       expect((test1 as any).isModifiedSubSet).not.toBeDefined();
       expect((test1 as any).publishEmptySubSet).toEqual(true);
 
-      const test2 = new SuperSet({ subsets: { isModified: () => true, publishEmpty: false } });
-      // quick test if the protected SubSet settings are correctly set ()
+      const test2 = new SuperSet({ subsets: { isUpdated: () => true, publishEmpty: false } });
+      // quick test if the protected subset settings are correctly set ()
       expect((test2 as any).isModifiedSubSet).toBeDefined();
       expect((test2 as any).publishEmptySubSet).toEqual(false);
 
       const test3 = new SuperSet({ subsets: { publishEmpty: true } });
-      // quick test if the protected SubSet settings are correctly set ()
+      // quick test if the protected subset settings are correctly set ()
       expect((test3 as any).isModifiedSubSet).not.toBeDefined();
       expect((test3 as any).publishEmptySubSet).toEqual(true);
 
       const test4 = new SuperSet({ publishEmpty: true });
-      // quick test if the protected SubSet settings are correctly set ()
+      // quick test if the protected subset settings are correctly set ()
       expect((test4 as any).isModifiedSubSet).not.toBeDefined();
       expect((test4 as any).publishEmptySubSet).toEqual(true);
     });
@@ -202,7 +202,7 @@ describe('SuperSet', () => {
       expect([...test.subsets].length).toEqual(2);
     });
 
-    it('should let empty(subsetId) clear the SubSet and remove items with no subset', () => {
+    it('should let empty(subsetId) clear the subset and remove items with no subset', () => {
       test = new SuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);
@@ -218,7 +218,7 @@ describe('SuperSet', () => {
       expect(test.get('content1')?.memberOf.has('SubSet2')).toBeTrue();
     });
 
-    it('should let delete(subsetId) delete the SubSet from from the SuperSet', () => {
+    it('should let delete(subsetId) delete the subset from from the SuperSet', () => {
       test = new SuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);
@@ -243,7 +243,7 @@ describe('SuperSet', () => {
   });
 
   describe('deleteSubSetItems', () => {
-    it('should remove all items of the SubSet from the set', () => {
+    it('should remove all items of the subset from the set', () => {
       test = new SuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);
@@ -260,7 +260,7 @@ describe('SuperSet', () => {
     });
   });
 
-  describe('SubSet delta$', () => {
+  describe('subset delta$', () => {
     let SubSet1Results: string[];
     let SubSet2Results: string[];
     let SubSet1delta$Updates: MapDelta<string, MemberObject>[];
@@ -299,9 +299,9 @@ describe('SuperSet', () => {
 
         expect(test.size).toEqual(4);
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].added.size).toEqual(4);
+        expect(SubSet1delta$Updates[0].created.size).toEqual(4);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].added.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].created.size).toEqual(2);
       });
     });
 
@@ -360,7 +360,7 @@ describe('SuperSet', () => {
       });
 
       it('should ignore multiple pauseSubSetUpdates', () => {
-        test.pauseSubsetDeltas();
+        test.subsets.pauseDeltas();
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -369,14 +369,14 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`add:${testContent.id}`]);
 
         // already paused
-        test.pauseSubsetDeltas();
+        test.subsets.pauseDeltas();
 
         clear(subscriptionResults);
 
         const testContent2 = createContent({ id: 'content0', memberOf: ['SubSet2'] });
         test.add(testContent2);
 
-        test.resumeSubsetDeltas();
+        test.subsets.resumeDeltas();
 
         expect(SubSet1Results).toEqual([]);
         expect(SubSet2Results).toEqual([`add:${testContent.id}`]);
@@ -391,7 +391,7 @@ describe('SuperSet', () => {
           createContent({ id: 'content3', memberOf: ['SubSet1', 'SubSet2'] }),
         ];
 
-        test.pauseSubsetDeltas();
+        test.subsets.pauseDeltas();
 
         test.addMultiple(testContent);
         expect(test.size).toEqual(4);
@@ -399,12 +399,12 @@ describe('SuperSet', () => {
         expect(SubSet1delta$Updates.length).toEqual(0);
         expect(SubSet2delta$Updates.length).toEqual(0);
 
-        test.resumeSubsetDeltas();
+        test.subsets.resumeDeltas();
 
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].added.size).toEqual(4);
+        expect(SubSet1delta$Updates[0].created.size).toEqual(4);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].added.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].created.size).toEqual(2);
       });
 
       it('should only publish a replace update after resumeSubSetUpdates', () => {
@@ -429,7 +429,7 @@ describe('SuperSet', () => {
         clear(SubSet2Results);
         clear(SubSet2delta$Updates);
 
-        test.pauseSubsetDeltas();
+        test.subsets.pauseDeltas();
 
         test.replace(replaceContent);
         expect(test.size).toEqual(4);
@@ -437,22 +437,22 @@ describe('SuperSet', () => {
         expect(SubSet1delta$Updates.length).toEqual(0);
         expect(SubSet2delta$Updates.length).toEqual(0);
 
-        test.resumeSubsetDeltas();
+        test.subsets.resumeDeltas();
 
         expect(test.size).toEqual(4);
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].added.size).toEqual(0);
+        expect(SubSet1delta$Updates[0].created.size).toEqual(0);
         expect(SubSet1delta$Updates[0].deleted.size).toEqual(1);
-        expect(SubSet1delta$Updates[0].modified.size).toEqual(3);
+        expect(SubSet1delta$Updates[0].updated.size).toEqual(3);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].added.size).toEqual(0);
+        expect(SubSet2delta$Updates[0].created.size).toEqual(0);
         expect(SubSet2delta$Updates[0].deleted.size).toEqual(0);
-        expect(SubSet2delta$Updates[0].modified.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].updated.size).toEqual(2);
       });
     });
 
-    describe('without isModified functions', () => {
-      it('should publish SubSet add', () => {
+    describe('without isUpdated functions', () => {
+      it('should publish subset add', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -460,7 +460,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`add:${testContent.id}`]);
       });
 
-      it('should publish SubSet change', () => {
+      it('should publish subset change', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -480,7 +480,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`modify:${testContent.id}`]);
       });
 
-      it('should publish SubSet merge', () => {
+      it('should publish subset merge', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -500,7 +500,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`modify:${testContent.id}`]);
       });
 
-      it('should publish SubSet addition', () => {
+      it('should publish subset addition', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -521,13 +521,13 @@ describe('SuperSet', () => {
       });
     });
 
-    describe('with isModified functions', () => {
+    describe('with isUpdated functions', () => {
       beforeEach(() => {
         // all main modify's are defined as different
-        const isModified = (a: MemberObject, b: MemberObject) => true;
-        // all SubSet modify's are defined as equal
+        const isUpdated = (a: MemberObject, b: MemberObject) => true;
+        // all subset modify's are defined as equal
         const isModifiedInSubSet = (a: MemberObject, b: MemberObject) => false;
-        test = new SuperSet({ isModified, subsets: { isModified: isModifiedInSubSet } });
+        test = new SuperSet({ isUpdated, subsets: { isUpdated: isModifiedInSubSet } });
         subscribeHandlers(test.delta$, subscriptionResults);
         SubSet1Results = [];
         subscribeHandlers(test.subsets.get('SubSet1').delta$, SubSet1Results);
@@ -535,7 +535,7 @@ describe('SuperSet', () => {
         subscribeHandlers(test.subsets.get('SubSet2').delta$, SubSet2Results);
       });
 
-      it('should publish SubSet add', () => {
+      it('should publish subset add', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -543,7 +543,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`add:${testContent.id}`]);
       });
 
-      it('should publish SubSet change', () => {
+      it('should publish subset change', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -563,7 +563,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`modify:${testContent.id}`]);
       });
 
-      it('should publish SubSet merge', () => {
+      it('should publish subset merge', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 
@@ -583,7 +583,7 @@ describe('SuperSet', () => {
         expect(subscriptionResults).toEqual([`modify:${testContent.id}`]);
       });
 
-      it('should publish SubSet addition', () => {
+      it('should publish subset addition', () => {
         const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
         test.add(testContent);
 

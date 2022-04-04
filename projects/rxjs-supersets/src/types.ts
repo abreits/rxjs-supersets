@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 export interface DeltaMapSettings<T> {
-  isModified?: IsModified<T>; // function to determine whether an existing entry is modified
+  isUpdated?: IsModified<T>; // function to determine whether an existing entry is updated
   publishEmpty?: boolean;     // always publish delta on first action, even if the map is still empty (default: true)
 }
 
@@ -34,15 +34,15 @@ export interface SubsetMap<K, V> extends SimpleSubsetMap<K, V> {
 
 export interface MapDelta<K, V> {
   all: ReadonlyMap<K, Readonly<V>>;
-  added: ReadonlyMap<K, Readonly<V>>;
+  created: ReadonlyMap<K, Readonly<V>>;
   deleted: ReadonlyMap<K, Readonly<V>>;
-  modified: ReadonlyMap<K, Readonly<V>>;
+  updated: ReadonlyMap<K, Readonly<V>>;
 }
 
 export type DeltaObservable<K, V> = Observable<MapDelta<K, V>>
 
 /**
- * Compare function, that returns _true_ if the current value has been modified.
+ * Compare function, that returns _true_ if the current value has been updated.
  */
 export type IsModified<T> = (current: T, previous: T) => boolean;
 

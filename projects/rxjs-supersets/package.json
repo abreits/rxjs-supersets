@@ -1,13 +1,13 @@
 {
   "name": "rxjs-supersets",
-  "version": "0.10.0",
+  "version": "1.0.0",
   "peerDependencies": {
     "rxjs": ">6.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "description": "A collection of Typescript Maps and Sets that publish changes in their state (items added, modified or deleted) using RxJS Observables.",
+  "description": "A collection of Typescript Maps and Sets that publish changes in their state (items created, updated or deleted) using RxJS Observables.",
   "keywords": [
     "rxjs",
     "typescript",

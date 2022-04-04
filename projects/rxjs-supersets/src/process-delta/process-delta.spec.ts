@@ -8,7 +8,7 @@ const entry2 = { id: 'entry2' };
 const entry3 = { id: 'entry3' };
 
 describe('processDelta', () => {
-  it('should change the mapDelta.added property to the whole set for the first mapDelta', () => {
+  it('should change the mapDelta.created property to the whole set for the first mapDelta', () => {
     let results: MapDelta<string, IdObject>[] = [];
     const test = new DeltaMap<string, IdObject>();
 
@@ -18,13 +18,13 @@ describe('processDelta', () => {
     const subscription = test.delta$.pipe(processDelta()).subscribe(result => results.push(result));
 
     expect(results.length).toBe(1);
-    expect(results[0].added.size).toBe(2);
+    expect(results[0].created.size).toBe(2);
 
     results = [];
     test.set(entry3.id, entry3);
 
     expect(results.length).toBe(1);
-    expect(results[0].added.size).toBe(1);
+    expect(results[0].created.size).toBe(1);
 
     subscription.unsubscribe();
   });
@@ -34,9 +34,9 @@ describe('processDelta', () => {
     const test = new DeltaMap<string, IdObject>();
 
     const subscription = test.delta$.pipe(processDelta({
-      add: entry => results.push(`add:${entry.id}`),
+      create: entry => results.push(`add:${entry.id}`),
       delete: entry => results.push(`delete:${entry.id}`),
-      modify: entry => results.push(`modify:${entry.id}`),
+      update: entry => results.push(`modify:${entry.id}`),
       before: () => results.push('before'),
       after: () => results.push('after')
     })).subscribe();

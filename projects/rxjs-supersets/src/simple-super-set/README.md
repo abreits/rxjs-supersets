@@ -47,7 +47,7 @@ If an item is not member of a subset (the `memberOf` set is empty) the entry wil
 
 Deletes all items containing `subSetId` in their `subset` property from the `SimpleSuperSet`.
 
-Sends an update to all `SubSet`'s that have elements removed.
+Sends an update to all `subset`'s that have elements removed.
 
 [back to top](#simplesuperset----omit-in-toc)
 </li></ul>
@@ -74,7 +74,7 @@ If a subset does not already exist, the `get` method creates a new empty `Readon
 Removes the subSetId from the `subSet` property of all items in the `SimpleSuperSet`.
 
 If the resulting item `subSet` property is empty (it is no longer member of a subSet), the item is also deleted.
-Sends an update to the subscribers of the `SubSet.delta$` involved and to subscribers of 
+Sends an update to the subscribers of the `subset.delta$` involved and to subscribers of 
 the `SuperSet.delta$` itself.
 
 [back to top](#superset----omit-in-toc)

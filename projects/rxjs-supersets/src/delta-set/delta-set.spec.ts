@@ -20,8 +20,8 @@ const newContent: ContentId[] = [
   // entry1 deleted
   { id: 'entry2', content: 'b1' }, // stays the same
   { id: 'entry3', content: 'c2' }, // updated
-  { id: 'entry4', content: 'd1' }, // added
-  { id: 'entry5', content: 'e1' }  // added
+  { id: 'entry4', content: 'd1' }, // created
+  { id: 'entry5', content: 'e1' }  // created
 ];
 
 describe('DeltaSet', () => {
@@ -90,9 +90,9 @@ describe('DeltaSet', () => {
       function subscribeHandlers(map: DeltaMap<string, any>): void {
         subscriptions.push(
           map.delta$.pipe(processDelta({
-            add: (entry: any) => subscriptionResults.push(`add:${entry.id}`),
+            create: (entry: any) => subscriptionResults.push(`add:${entry.id}`),
             delete: (entry: any) => subscriptionResults.push(`delete:${entry.id}`),
-            modify: (entry: any) => subscriptionResults.push(`modify:${entry.id}`)
+            update: (entry: any) => subscriptionResults.push(`modify:${entry.id}`)
           })).subscribe(result => delta$Results.push(result))
         );
       }
@@ -110,7 +110,7 @@ describe('DeltaSet', () => {
       });
 
       describe('addMultiple', () => {
-        it('should observe adding new content without isModified function', () => {
+        it('should observe adding new content without isUpdated function', () => {
           const test = new DeltaSet<ContentId>();
           subscribeHandlers(test);
           test.addMultiple(startContent);
@@ -126,8 +126,8 @@ describe('DeltaSet', () => {
           ]);
         });
 
-        it('should observe adding new content with isModified function', () => {
-          const test = new DeltaSet<ContentId>({ isModified: (a, b) => a.content !== b.content });
+        it('should observe adding new content with isUpdated function', () => {
+          const test = new DeltaSet<ContentId>({ isUpdated: (a, b) => a.content !== b.content });
           subscribeHandlers(test);
           test.addMultiple(startContent);
           subscriptionResults = [];
@@ -149,7 +149,7 @@ describe('DeltaSet', () => {
           expect(subscriptionResults.sort()).toEqual(['add:entry1', 'add:entry2', 'add:entry3']);
         });
 
-        it('should observe updating to new content without isModified function', () => {
+        it('should observe updating to new content without isUpdated function', () => {
           const test = new DeltaSet<ContentId>();
           subscribeHandlers(test);
           test.replace(startContent);
@@ -164,8 +164,8 @@ describe('DeltaSet', () => {
           ]);
         });
 
-        it('should observe updating to new content with isModified function', () => {
-          const test = new DeltaSet<ContentId>({ isModified: (a: ContentId, b: ContentId) => a.content !== b.content });
+        it('should observe updating to new content with isUpdated function', () => {
+          const test = new DeltaSet<ContentId>({ isUpdated: (a: ContentId, b: ContentId) => a.content !== b.content });
           subscribeHandlers(test);
           test.replace(startContent);
           subscriptionResults = [];
