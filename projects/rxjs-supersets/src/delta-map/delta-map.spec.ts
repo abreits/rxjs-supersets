@@ -184,6 +184,23 @@ describe('DeltaMap', () => {
     });
   });
 
+  describe('deleteMultiple', () => {
+    it('should delete multiple entries', () => {
+      const test = new DeltaMap();
+
+      test.set(entry1.id, entry1);
+      test.set(entry2.id, entry2);
+      test.set(entry3.id, entry3);
+
+      test.deleteMultiple([entry2.id, entry1.id]);
+
+      expect(test.size).toEqual(1);
+      expect(test.get(entry1.id)).not.toBeDefined();
+      expect(test.get(entry2.id)).not.toBeDefined();
+      expect(test.get(entry3.id)).toBeDefined();
+    });
+  });
+
   describe('clear', () => {
     it('should remove all existing entries', () => {
       const test = new DeltaMap();
