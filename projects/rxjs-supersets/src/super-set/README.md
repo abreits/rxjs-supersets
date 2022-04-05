@@ -1,6 +1,6 @@
 # SuperSet <!-- omit in toc -->
 
-The `SuperSet` is a subclass of the [`DeltaSet`](../delta-set/README.md) class.
+The `SuperSet` is a subclass of the [`SimplesuperSet`](../simple-super-set/README.md) class.
 
 The `SuperSet` contains items that are member of one or more subsets.
 The items implement the `MemberObject` interface. Its `memberOf` property defines the subsets that the item is a member of. If an item no longer is member of any subset it is removed from the superset also.
@@ -62,7 +62,7 @@ If an item is not member of a subset (the `memberOf` set is empty) the entry wil
 
 Deletes all items containing `subSetId` in their `subset` property from the `SuperSet`.
 
-Sends an update to all `SubSet`'s that have elements removed.
+Sends an update to all `subset`'s that have elements removed.
 
 [back to top](#superset----omit-in-toc)
 </li></ul>
@@ -89,7 +89,7 @@ If a subset does not already exist, the `get` method creates a new empty `Readon
 Removes the subSetId from the `subSet` property of all items in the `SuperSet`.
 
 If the resulting item `subSet` property is empty (it is no longer member of a subSet), the item is also deleted.
-Sends an update to the subscribers of the `SubSet.delta$` involved and to subscribers of 
+Sends an update to the subscribers of the `subset.delta$` involved and to subscribers of 
 the `SuperSet.delta$` itself.
 
 [back to top](#superset----omit-in-toc)

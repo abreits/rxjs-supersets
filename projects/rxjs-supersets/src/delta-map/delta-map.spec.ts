@@ -56,10 +56,10 @@ describe('DeltaMap', () => {
       expect(test.get('entry2')).toEqual('content2');
     });
 
-    it('should create a new ObservableMap with an isModified function in the settings', () => {
+    it('should create a new ObservableMap with an isUpdated function in the settings', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
 
-      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -67,10 +67,10 @@ describe('DeltaMap', () => {
       expect(test.get(entry2.id)).toBe(entry2a);
     });
 
-    it('should create a new ObservableMap with an isModified function in the settings', () => {
+    it('should create a new ObservableMap with an isUpdated function in the settings', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
 
-      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -85,7 +85,7 @@ describe('DeltaMap', () => {
       ];
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
 
-      const test = new DeltaMap<string, ContentIdObject>(predefinedArray, { isModified: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>(predefinedArray, { isUpdated: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -122,7 +122,7 @@ describe('DeltaMap', () => {
       expect(test.get(entry1.id)).toBe(entry1);
     });
 
-    it('should overwrite existing entries when no isModified function is defined', () => {
+    it('should overwrite existing entries when no isUpdated function is defined', () => {
       const test = new DeltaMap();
 
       test.set(entry2.id, entry2);
@@ -131,9 +131,9 @@ describe('DeltaMap', () => {
       expect(test.get(entry2.id)).toBe(entry2a);
     });
 
-    it('should overwrite existing entries when the isModified function returns true', () => {
+    it('should overwrite existing entries when the isUpdated function returns true', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2b.id, entry2b);
@@ -143,7 +143,7 @@ describe('DeltaMap', () => {
 
     it('should not overwrite existing entries when the ismodified function returns false', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -184,6 +184,23 @@ describe('DeltaMap', () => {
     });
   });
 
+  describe('deleteMultiple', () => {
+    it('should delete multiple entries', () => {
+      const test = new DeltaMap();
+
+      test.set(entry1.id, entry1);
+      test.set(entry2.id, entry2);
+      test.set(entry3.id, entry3);
+
+      test.deleteMultiple([entry2.id, entry1.id]);
+
+      expect(test.size).toEqual(1);
+      expect(test.get(entry1.id)).not.toBeDefined();
+      expect(test.get(entry2.id)).not.toBeDefined();
+      expect(test.get(entry3.id)).toBeDefined();
+    });
+  });
+
   describe('clear', () => {
     it('should remove all existing entries', () => {
       const test = new DeltaMap();
@@ -206,9 +223,9 @@ describe('DeltaMap', () => {
     function subscribeHandlers(map: DeltaMap<string, IdObject>): void {
       subscriptions.push(
         map.delta$.pipe(processDelta({
-          add: (entry) => subscriptionResults.push(`add:${entry.id}`),
+          create: (entry) => subscriptionResults.push(`add:${entry.id}`),
           delete: (entry) => subscriptionResults.push(`delete:${entry.id}`),
-          modify: (entry) => subscriptionResults.push(`modify:${entry.id}`)
+          update: (entry) => subscriptionResults.push(`modify:${entry.id}`)
         })).subscribe(result => delta$Results.push(result))
       );
     }
@@ -311,7 +328,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([]);
       });
 
-      it('should send only one delta$.add update if a new set element is modified before resumeDelta', () => {
+      it('should send only one delta$.add update if a new set element is updated before resumeDelta', () => {
         const test = new DeltaMap<string, any>();
         subscribeHandlers(test);
 
@@ -325,7 +342,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry2a.id}`]);
       });
 
-      it('should not send a delta$.modify update if an existing element is modified and deleted before resumeDelta', () => {
+      it('should not send a delta$.modify update if an existing element is updated and deleted before resumeDelta', () => {
         const test = new DeltaMap<string, any>();
         subscribeHandlers(test);
 
@@ -393,7 +410,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry1.id}`]);
       });
 
-      it('should overwrite existing entries when no isModified function is defined', () => {
+      it('should overwrite existing entries when no isUpdated function is defined', () => {
         const test = new DeltaMap<string, any>();
         subscribeHandlers(test);
 
@@ -406,9 +423,9 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry2.id}`, `modify:${entry2a.id}`]);
       });
 
-      it('should overwrite existing entries when the isModified function returns true', () => {
+      it('should overwrite existing entries when the isUpdated function returns true', () => {
         const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-        const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
         subscribeHandlers(test as any); // typescript does not recognize type compatibility, bug?
 
         test.set(entry2a.id, entry2a);
@@ -420,9 +437,9 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry2a.id}`, `modify:${entry2b.id}`]);
       });
 
-      it('should not overwrite existing entries when the isModified function returns false', () => {
+      it('should not overwrite existing entries when the isUpdated function returns false', () => {
         const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-        const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
+        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
         subscribeHandlers(test as any); // typescript does not recognize type compatibility, bug?
 
         test.set(entry2a.id, entry2a);
@@ -434,7 +451,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry2a.id}`]);
       });
 
-      it('should receive previously added entries', () => {
+      it('should receive previously created entries', () => {
         const test = new DeltaMap<string, any>();
 
         test.set(entry1.id, entry1);
@@ -521,7 +538,7 @@ describe('DeltaMap', () => {
     });
   });
 
-  describe('destroy', () => {
+  describe('close', () => {
     it('should delete all existing entries and complete the Observable', () => {
       let results: MapDelta<string, IdObject>[] = [];
       const test = new DeltaMap<string, IdObject>();
@@ -533,7 +550,7 @@ describe('DeltaMap', () => {
 
       results = [];
 
-      test.destroy();
+      test.close();
 
       expect(results.length).toBe(1);
       expect(results[0].deleted.size).toBe(3);
@@ -553,7 +570,7 @@ describe('DeltaMap', () => {
       results = [];
 
       test.pauseDelta();
-      test.destroy();
+      test.close();
 
       expect(results.length).toBe(1);
       expect(results[0].deleted.size).toBe(3);

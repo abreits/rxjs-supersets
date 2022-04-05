@@ -9,15 +9,15 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   private deltaSubject$ = new ReplaySubject<MapDelta<K, V>>(1);
   public delta$ = this.deltaSubject$.asObservable();
 
-  private added!: Map<K, V>;
+  private created!: Map<K, V>;
   private deleted!: Map<K, V>;
-  private modified!: Map<K, V>;
+  private updated!: Map<K, V>;
   private existedBeforeDelta?: Set<K>;
 
   private publishEmpty = true;
   private publish = true;
 
-  protected isModified?: IsModified<V>;
+  protected isUpdated?: IsModified<V>;
 
   constructor();
   constructor(items: Iterable<Iterable<any>>);
@@ -55,14 +55,14 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Process constructor settings, can be overriden and extended in subclasses
    */
   protected initializeSettings(settings: DeltaMapSettings<V>): void {
-    this.isModified = settings.isModified;
+    this.isUpdated = settings.isUpdated;
     this.publishEmpty = settings.publishEmpty === undefined ? true : settings.publishEmpty;
   }
 
   private initializeDelta(): void {
-    this.added = new Map<K, V>();
+    this.created = new Map<K, V>();
     this.deleted = new Map<K, V>();
-    this.modified = new Map<K, V>();
+    this.updated = new Map<K, V>();
     this.existedBeforeDelta = undefined;
   }
 
@@ -70,11 +70,11 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Publish modification to delta$ if there are changes or if it is the first time called.
    */
   protected publishDelta(): void {
-    if (this.publish && (this.added.size > 0 || this.modified.size > 0 || this.deleted.size > 0 || this.publishEmpty)) {
+    if (this.publish && (this.created.size > 0 || this.updated.size > 0 || this.deleted.size > 0 || this.publishEmpty)) {
       this.deltaSubject$.next({
         all: this,
-        added: this.added,
-        modified: this.modified,
+        created: this.created,
+        updated: this.updated,
         deleted: this.deleted
       });
       this.publishEmpty = false;
@@ -122,27 +122,27 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Can be extended and/or overridden in subclasses
    */
   protected doSet(id: K, value: V): void {
-    if (this.added.has(id)) {
-      // already in added, update add
+    if (this.created.has(id)) {
+      // already in created, update add
       super.set(id, value);
-      this.added.set(id, value);
+      this.created.set(id, value);
     } else {
       this.deleted.delete(id);
       const prevEntry = this.get(id);
       if (prevEntry) {
         // existing entry
-        if (!this.isModified || this.isModified(value, prevEntry)) {
-          // modified entry
+        if (!this.isUpdated || this.isUpdated(value, prevEntry)) {
+          // updated entry
           super.set(id, value);
-          this.modified.set(id, value);
+          this.updated.set(id, value);
         }
       } else {
         // new entry
         super.set(id, value);
         if (this.existedBeforeDelta?.has(id)) {
-          this.modified.set(id, value);
+          this.updated.set(id, value);
         } else {
-          this.added.set(id, value);
+          this.created.set(id, value);
         }
       }
     }
@@ -152,7 +152,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Deletes an entry and notifies deletions through _delta$_ if the entry exists.
    * @override
    */
-  override delete(id: K): any {
+  override delete(id: K): boolean {
     const deleted = this.doDelete(id);
     this.publishDelta();
     return deleted;
@@ -163,11 +163,11 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Determines if it exists and updates the delta. 
    * Can be extended and/or overridden in subclasses
    */
-  protected doDelete(id: K): any {
+  protected doDelete(id: K): boolean {
     const deletedItem = this.get(id);
     super.delete(id);
-    if (this.added.has(id)) {
-      this.added.delete(id);
+    if (this.created.has(id)) {
+      this.created.delete(id);
       return true;
     } else {
       if (deletedItem) {
@@ -177,7 +177,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
           }
           this.existedBeforeDelta.add(id);
         }
-        this.modified.delete(id);
+        this.updated.delete(id);
         this.deleted.set(id, deletedItem);
         return true;
       }
@@ -186,12 +186,22 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   }
 
   /**
+   * Deletes multiple entries at once and notifies changes through _delta$_.
+   */
+  deleteMultiple(entrieIds: Iterable<K>): void {
+    for (const entryId of entrieIds) {
+      this.doDelete(entryId);
+    }
+    this.publishDelta();
+  }
+
+  /**
    * Clears all entries and notifies deletions through _delta$_.
    * @override
    */
   override clear(): any {
     if (this.deltaSubject$.observed) {
-      this.forEach((value, key) => this.deleted.set(key,value));
+      this.forEach((value, key) => this.deleted.set(key, value));
       this.publishDelta();
     }
     super.clear();
@@ -200,7 +210,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   /**
    * Clears any remaining entries and completes the delta$ observable
    */
-  destroy(): void {
+  close(): void {
     this.resumeDelta();
     this.clear();
     this.deltaSubject$.complete();

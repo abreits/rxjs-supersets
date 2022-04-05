@@ -1,6 +1,6 @@
-# RxjsSupersets library
+# rxjs-supersets library buildpack
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.0.
+This library buildpack was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.0.
 
 The library code itself can be found in the [projects/rxjs-supersets](projects/rxjs-supersets) directory.
 
@@ -17,9 +17,22 @@ Unfortunately it remains quite a large project to build this relatively small li
 
 Run `npm run build` to build the project. The build artifacts will be stored in the `dist/rxjs-supersets` directory.
 
+## Lint
+
+Run `npm run lint` to check the code with [ESLint](https://eslint.org/)
+
 ## Running unit tests
 
 Run `npm test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running unit tests with code coverage
+
+Run `npm run coverage` to execute the unit tests with code coverage via [Karma](https://karma-runner.github.io).
+Detailed coverage results can be found in the `coverage/rxjs-supersets` directory.
+
+## Full build
+
+Run `npm run build-ci` for a full lint, unittest and coverage
 
 ## Further help
 

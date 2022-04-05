@@ -43,7 +43,7 @@ export class DeltaSet<V extends IdObject<K>, K = string> extends DeltaMap<K, V> 
    * If an existing entry is the same according to the _isEqual_ function, nothing is changed.
    */
   addMultiple(entries: Iterable<V>): void {
-    for (const newEntry of entries as Iterable<V>) {
+    for (const newEntry of entries) {
       this.doSet(newEntry.id, newEntry);
     }
     this.publishDelta();

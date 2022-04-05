@@ -39,7 +39,7 @@ Adds a new or existing entry to the `DeltaSet`, updates the `delta$` subscribers
 <ul><li style="list-style-type: none;">
 
 Adds multiple new and/or existing entries entries to the `DeltaSet`.
-Sends the `delta$` subscribers only one update containing all changes (added and/or modified entries).
+Sends the `delta$` subscribers only one update containing all changes (created and/or updated entries).
 
 [back to top](#deltaset----omit-in-toc)
 </li></ul>
@@ -49,7 +49,7 @@ Sends the `delta$` subscribers only one update containing all changes (added and
 <ul><li style="list-style-type: none;">
 
 Replaces the whole contents of an `DeltaSet`.
-Publishes the changes (deleted, added and/or modified entries) in one update to all `delta$` subscribers.
+Publishes the changes (deleted, created and/or updated entries) in one update to all `delta$` subscribers.
 
 [back to top](#deltaset----omit-in-toc)
 </li></ul>

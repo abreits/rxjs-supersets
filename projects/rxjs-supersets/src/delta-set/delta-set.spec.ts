@@ -20,8 +20,8 @@ const newContent: ContentId[] = [
   // entry1 deleted
   { id: 'entry2', content: 'b1' }, // stays the same
   { id: 'entry3', content: 'c2' }, // updated
-  { id: 'entry4', content: 'd1' }, // added
-  { id: 'entry5', content: 'e1' }  // added
+  { id: 'entry4', content: 'd1' }, // created
+  { id: 'entry5', content: 'e1' }  // created
 ];
 
 describe('DeltaSet', () => {
@@ -62,7 +62,7 @@ describe('DeltaSet', () => {
   });
 
   describe('set', () => {
-    it('should do an add) ', () => {
+    it('should do an create) ', () => {
       const test = new DeltaSet();
 
       test.set('ignoredEntryId', entry1);
@@ -91,101 +91,101 @@ describe('DeltaSet', () => {
       expect(test.size).toEqual(newContent.length);
       newContent.forEach(entry => expect(test.has(entry.id)).toBeTrue());
     });
-  });
 
-  describe('delta$', () => {
-    let subscriptionResults: string[];
-    let subscriptions: Subscription[];
-    let delta$Results: MapDelta<string, any>[];
+    describe('delta$', () => {
+      let subscriptionResults: string[];
+      let subscriptions: Subscription[];
+      let delta$Results: MapDelta<string, any>[];
 
-    function subscribeHandlers(map: DeltaMap<string, any>): void {
-      subscriptions.push(
-        map.delta$.pipe(processDelta({
-          add: (entry: any) => subscriptionResults.push(`add:${entry.id}`),
-          delete: (entry: any) => subscriptionResults.push(`delete:${entry.id}`),
-          modify: (entry: any) => subscriptionResults.push(`modify:${entry.id}`)
-        })).subscribe(result => delta$Results.push(result))
-      );
-    }
+      function subscribeHandlers(map: DeltaMap<string, any>): void {
+        subscriptions.push(
+          map.delta$.pipe(processDelta({
+            create: (entry: any) => subscriptionResults.push(`create:${entry.id}`),
+            delete: (entry: any) => subscriptionResults.push(`delete:${entry.id}`),
+            update: (entry: any) => subscriptionResults.push(`update:${entry.id}`)
+          })).subscribe(result => delta$Results.push(result))
+        );
+      }
 
-    beforeEach(() => {
-      subscriptionResults = [];
-      delta$Results = [];
-      subscriptions = [];
-    });
-
-    afterEach(() => {
-      subscriptions.forEach(subscription => {
-        subscription.unsubscribe();
-      });
-    });
-
-    describe('addMultiple', () => {
-      it('should observe adding new content without isModified function', () => {
-        const test = new DeltaSet<ContentId>();
-        subscribeHandlers(test);
-        test.addMultiple(startContent);
+      beforeEach(() => {
         subscriptionResults = [];
         delta$Results = [];
-
-        test.addMultiple(newContent);
-
-        expect(test.size).toEqual(5);
-        expect(delta$Results.length).toEqual(1); // combined update only
-        expect(subscriptionResults.sort()).toEqual([
-          'add:entry4', 'add:entry5', 'modify:entry2', 'modify:entry3'
-        ]);
+        subscriptions = [];
       });
 
-      it('should observe adding new content with isModified function', () => {
-        const test = new DeltaSet<ContentId>({ isModified: (a, b) => a.content !== b.content });
-        subscribeHandlers(test);
-        test.addMultiple(startContent);
-        subscriptionResults = [];
-
-        test.addMultiple(newContent);
-
-        expect(subscriptionResults.sort()).toEqual([
-          'add:entry4', 'add:entry5', 'modify:entry3'
-        ]);
-      });
-    });
-
-    describe('replace', () => {
-      it('should observe setting the start content', () => {
-        const test = new DeltaSet<ContentId>();
-        subscribeHandlers(test);
-        test.replace(startContent);
-
-        expect(subscriptionResults.sort()).toEqual(['add:entry1', 'add:entry2', 'add:entry3']);
+      afterEach(() => {
+        subscriptions.forEach(subscription => {
+          subscription.unsubscribe();
+        });
       });
 
-      it('should observe updating to new content without isModified function', () => {
-        const test = new DeltaSet<ContentId>();
-        subscribeHandlers(test);
-        test.replace(startContent);
-        subscriptionResults = [];
-        delta$Results = [];
+      describe('addMultiple', () => {
+        it('should observe adding new content without isUpdated function', () => {
+          const test = new DeltaSet<ContentId>();
+          subscribeHandlers(test);
+          test.addMultiple(startContent);
+          subscriptionResults = [];
+          delta$Results = [];
 
-        test.replace(newContent);
+          test.addMultiple(newContent);
 
-        expect(delta$Results.length).toEqual(1); // combined update only
-        expect(subscriptionResults.sort()).toEqual([
-          'add:entry4', 'add:entry5', 'delete:entry1', 'modify:entry2', 'modify:entry3'
-        ]);
+          expect(test.size).toEqual(5);
+          expect(delta$Results.length).toEqual(1); // combined update only
+          expect(subscriptionResults.sort()).toEqual([
+            'create:entry4', 'create:entry5', 'update:entry2', 'update:entry3'
+          ]);
+        });
+
+        it('should observe adding new content with isUpdated function', () => {
+          const test = new DeltaSet<ContentId>({ isUpdated: (a, b) => a.content !== b.content });
+          subscribeHandlers(test);
+          test.addMultiple(startContent);
+          subscriptionResults = [];
+
+          test.addMultiple(newContent);
+
+          expect(subscriptionResults.sort()).toEqual([
+            'create:entry4', 'create:entry5', 'update:entry3'
+          ]);
+        });
       });
 
-      it('should observe updating to new content with isModified function', () => {
-        const test = new DeltaSet<ContentId>({ isModified: (a: ContentId, b: ContentId) => a.content !== b.content });
-        subscribeHandlers(test);
-        test.replace(startContent);
-        subscriptionResults = [];
+      describe('replace', () => {
+        it('should observe setting the start content', () => {
+          const test = new DeltaSet<ContentId>();
+          subscribeHandlers(test);
+          test.replace(startContent);
 
-        test.replace(newContent);
+          expect(subscriptionResults.sort()).toEqual(['create:entry1', 'create:entry2', 'create:entry3']);
+        });
 
-        expect(subscriptionResults.sort()).toEqual([
-          'add:entry4', 'add:entry5', 'delete:entry1', 'modify:entry3'
-        ]);
+        it('should observe updating to new content without isUpdated function', () => {
+          const test = new DeltaSet<ContentId>();
+          subscribeHandlers(test);
+          test.replace(startContent);
+          subscriptionResults = [];
+          delta$Results = [];
+
+          test.replace(newContent);
+
+          expect(delta$Results.length).toEqual(1); // combined update only
+          expect(subscriptionResults.sort()).toEqual([
+            'create:entry4', 'create:entry5', 'delete:entry1', 'update:entry2', 'update:entry3'
+          ]);
+        });
+
+        it('should observe updating to new content with isUpdated function', () => {
+          const test = new DeltaSet<ContentId>({ isUpdated: (a: ContentId, b: ContentId) => a.content !== b.content });
+          subscribeHandlers(test);
+          test.replace(startContent);
+          subscriptionResults = [];
+
+          test.replace(newContent);
+
+          expect(subscriptionResults.sort()).toEqual([
+            'create:entry4', 'create:entry5', 'delete:entry1', 'update:entry3'
+          ]);
+        });
       });
     });
   });

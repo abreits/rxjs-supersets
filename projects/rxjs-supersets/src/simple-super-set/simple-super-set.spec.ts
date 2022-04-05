@@ -8,9 +8,9 @@ import { SimpleSuperSet } from './simple-super-set';
 
 // debugging support function
 // function printSubSet(subset: any) {
-//   console.log('added:', [...subset.added.keys()])
+//   console.log('created:', [...subset.created.keys()])
 //   console.log('deleted:', [...subset.deleted.keys()])
-//   console.log('modified:', [...subset.modified.keys()])
+//   console.log('updated:', [...subset.updated.keys()])
 // }
 
 class ContentClass implements MemberObject {
@@ -32,9 +32,9 @@ describe('SimpleSimpleSuperSet', () => {
   function subscribeHandlers(observable: DeltaObservable<string, MemberObject>, results: string[]): void {
     subscriptions.push(
       observable.pipe(processDelta({
-        add: (entry: any) => results.push(`add:${entry.id}`),
+        create: (entry: any) => results.push(`add:${entry.id}`),
         delete: (entry: any) => results.push(`delete:${entry.id}`),
-        modify: (entry: any) => results.push(`modify:${entry.id}`)
+        update: (entry: any) => results.push(`modify:${entry.id}`)
       })).subscribe()
     );
   }
@@ -178,7 +178,7 @@ describe('SimpleSimpleSuperSet', () => {
       expect([...test.subsets].length).toEqual(2);
     });
 
-    it('should let empty(subsetId) clear the SubSet and remove items with no subset', () => {
+    it('should let empty(subsetId) clear the subset and remove items with no subset', () => {
       test = new SimpleSuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);
@@ -194,7 +194,7 @@ describe('SimpleSimpleSuperSet', () => {
       expect(test.get('content1')?.memberOf.has('SubSet2')).toBeTrue();
     });
 
-    it('should let delete(subsetId) delete the SubSet from from the SuperSet', () => {
+    it('should let delete(subsetId) delete the subset from from the SuperSet', () => {
       test = new SimpleSuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);

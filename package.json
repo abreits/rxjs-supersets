@@ -1,6 +1,7 @@
 {
-  "name": "rxjs-supersets",
+  "name": "rxjs-supersets-buildpack",
   "version": "0.9.0",
+  "description": "Buildpack for rxjs-supersets, a collection of Typescript Maps and Sets that publish changes in their state (items created, updated or deleted) using RxJS Observables.",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
