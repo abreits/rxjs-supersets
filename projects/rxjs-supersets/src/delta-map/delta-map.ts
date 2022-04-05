@@ -20,23 +20,21 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   protected isModified?: IsModified<V>;
 
   constructor();
-  constructor(entries: Iterable<Iterable<any>>);
+  constructor(items: Iterable<Iterable<any>>);
   constructor(settings?: DeltaMapSettings<V>);
-  constructor(entries: Iterable<Iterable<any>>, settings?: DeltaMapSettings<V>);
+  constructor(items: Iterable<Iterable<any>>, settings?: DeltaMapSettings<V>);
   constructor(
-    entriesOrSettings?: Iterable<Iterable<any>> | DeltaMapSettings<V>,
+    itemsOrSettings?: Iterable<any> | DeltaMapSettings<V>,
     settings?: DeltaMapSettings<V>
   ) {
     super();
     this.initializeDelta();
-    if (entriesOrSettings && Symbol.iterator in Object(entriesOrSettings)) {
-      const entries = entriesOrSettings as Iterable<[K, V]>;
-      for (const entry of entries) {
-        this.doSet(entry[0], entry[1]);
-      }
+    if (itemsOrSettings && Symbol.iterator in Object(itemsOrSettings)) {
+      this.initializeContent(itemsOrSettings as Iterable<any>);
+      this.publishDelta();
     }
     if (!settings) {
-      settings = entriesOrSettings as DeltaMapSettings<V>;
+      settings = itemsOrSettings as DeltaMapSettings<V>;
     }
     if (settings) {
       this.initializeSettings(settings as DeltaMapSettings<V>);
@@ -44,7 +42,17 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   }
 
   /**
-   * Process constructor settings, can be overriden and extended in subsclasses
+   * Process constructor content, can be overriden and extended in subclasses 
+   */
+  protected initializeContent(items: Iterable<any>): void {
+    // expect key value pairs
+    for (const item of items as Iterable<[K, V]>) {
+      this.doSet(item[0], item[1]);
+    }
+  }
+
+  /**
+   * Process constructor settings, can be overriden and extended in subclasses
    */
   protected initializeSettings(settings: DeltaMapSettings<V>): void {
     this.isModified = settings.isModified;

@@ -1,11 +1,32 @@
 import { DeltaMap } from '../delta-map/delta-map';
-import { IdObject } from '../types';
+import { DeltaMapSettings, IdObject } from '../types';
 
 
 /**
  * A Set containing IdObjects that publishes changes through the _delta$_ Observable.
  */
 export class DeltaSet<V extends IdObject<K>, K = string> extends DeltaMap<K, V> {
+  constructor();
+  constructor(items: Iterable<V>);
+  constructor(settings?: DeltaMapSettings<V>);
+  constructor(items: Iterable<V>, settings?: DeltaMapSettings<V>);
+  constructor(
+    itemsOrSettings?: Iterable<V> | DeltaMapSettings<V>,
+    settings?: DeltaMapSettings<V>
+  ) {
+    super(itemsOrSettings as any, settings);
+  }
+  
+  /**
+   * Process constructor content, can be overriden and extended in subclasses 
+   */
+  protected override initializeContent(items: Iterable<any>): void {
+    // 
+    for (const item of items as Iterable<V>) {
+      this.doSet(item.id, item);
+    }
+  }
+
   /**
    * Adds or modifies an entry and notifies changes through _delta$_.
    * 

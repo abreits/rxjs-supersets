@@ -225,6 +225,26 @@ describe('DeltaMap', () => {
       });
     });
 
+    describe('constructor', () => {
+      it('should publish items defined in the constructor', () => {
+        const predefined = [
+          [entry1.id, entry1],
+          [entry2.id, entry2],
+          [entry3.id, entry3]
+        ];
+
+        const test = new DeltaMap<string, any>(predefined);
+        subscribeHandlers(test);
+
+        expect(subscriptionResults.length).toEqual(3);
+        expect(subscriptionResults).toEqual([
+          `add:${entry1.id}`,
+          `add:${entry2.id}`,
+          `add:${entry3.id}`
+        ]);
+      });
+    });
+
     describe('pauseDelta & resumeDelta', () => {
       it('should send individual delta$ updates before pauseDelta is called', () => {
         const test = new DeltaMap<string, any>();
