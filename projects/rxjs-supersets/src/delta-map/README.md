@@ -39,9 +39,9 @@ const subscription = deltaMap.delta$.subscribe(delta => {
 
 // subscribe to DeltaMap updates with the processDelta operator
 const subscription = deltaMap.delta$.pipe(processDelta({
-  create: item => processCreateElement(item),
-  update: item => processUpdateElement(item),
-  delete: item => processDeleteElement(item)
+  create: entry => processCreateElement(entry),
+  update: entry => processUpdateElement(entry),
+  delete: entry => processDeleteElement(entry)
 })).subscribe();
 ```
 [back to top](#deltamap----omit-in-toc)
@@ -55,8 +55,8 @@ The `DeltaMap` class adds or changes the following properties and methods of the
 
   The constructor for the `DeltaMap` class (called in `new DeltaMap<Key, Value>()`) can be used the same way as the `Map` constructor. It also accepts a settings argument instead or after the `preFilled` content argument. The `DeltaMapSettings` structure can contain the following two properties:
 
-  - `isUpdated?: (T) => boolean` By default when an item is `set` in the `DeltaMap` with an `Id` key that is already present, it is assumed that it is newer and the existing key will be updated to the `set` item. 
-  An `isUpdated` function can be created to only update the value when certain conditions have been met (e.g. the `date` property of the `set` item must be more recent than the exisiting item)
+  - `isUpdated?: (T) => boolean` By default when an entry is `set` in the `DeltaMap` with an `Id` key that is already present, it is assumed that it is newer and the existing key will be updated to the `set` entry. 
+  An `isUpdated` function can be created to only update the value when certain conditions have been met (e.g. the `date` property of the `set` entry must be more recent than the exisiting entry)
 
   - `publishEmpty?: boolean` By default a `DeltaMap` only publishes when someting changes from the default empty `DeltaMap`. 
   There are certain cases when a subscription wants to know if the `DeltaMap` is initially empty.
@@ -107,24 +107,24 @@ Examples
 ``` typescript
 map1.delta$.subscribe(delta => {
   console.log('received map delta update')
-  console.log(`  all items: ${delta.all}`);
-  console.log(`  items created: ${delta.created}`);
-  console.log(`  items updated: ${delta.updated}`);
-  console.log(`  items deleted: ${delta.deleted}`);
+  console.log(`  all entries: ${delta.all}`);
+  console.log(`  entries created: ${delta.created}`);
+  console.log(`  entries updated: ${delta.updated}`);
+  console.log(`  entries deleted: ${delta.deleted}`);
 });
 
 map1.delta$.pipe(processDelta()).subscribe(delta => {
   console.log('received map delta update')
-  console.log(`  all items: ${delta.all}`);
-  console.log(`  items created: ${delta.created}`); // equal to 'all' in first delta
-  console.log(`  items updated: ${delta.updated}`); // empty in first delta
-  console.log(`  items deleted: ${delta.deleted}`); // empty in first delta
+  console.log(`  all entries: ${delta.all}`);
+  console.log(`  entries created: ${delta.created}`); // equal to 'all' in first delta
+  console.log(`  entries updated: ${delta.updated}`); // empty in first delta
+  console.log(`  entries deleted: ${delta.deleted}`); // empty in first delta
 });
 
 map1.delta$.pipe(processDelta({
-  create: item => console.log(`created ${item}`),
-  update: item => console.log(`updated ${item}`),
-  delete: item => console.log(`deleted ${item}`),
+  create: entry => console.log(`created ${entry}`),
+  update: entry => console.log(`updated ${entry}`),
+  delete: entry => console.log(`deleted ${entry}`),
 })).subscribe();
 ```
 [back to top](#deltamap----omit-in-toc)

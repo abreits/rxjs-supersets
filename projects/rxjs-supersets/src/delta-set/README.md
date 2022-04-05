@@ -2,7 +2,7 @@
 
 The `DeltaSet` is a subclass of the [`DeltaMap`](../delta-set/README.md) class.
 
-The `DeltaSet` contains items that implement the `IdObject` interface. Its `id` property uniquely defines the item for the `DeltaSet`. 
+The `DeltaSet` contains entries that implement the `IdObject` interface. Its `id` property uniquely defines the entry for the `DeltaSet`. 
 The id type defaults to string, but can be overriden by defining the IdType (`new DeltaSet<IdObjectType, IdType>()`).
 
 ## Table of contents <!-- omit in toc -->

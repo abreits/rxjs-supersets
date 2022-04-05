@@ -7,23 +7,23 @@ import { DeltaMapSettings, IdObject } from '../types';
  */
 export class DeltaSet<V extends IdObject<K>, K = string> extends DeltaMap<K, V> {
   constructor();
-  constructor(items: Iterable<V>);
+  constructor(entries: Iterable<V>);
   constructor(settings?: DeltaMapSettings<V>);
-  constructor(items: Iterable<V>, settings?: DeltaMapSettings<V>);
+  constructor(entries: Iterable<V>, settings?: DeltaMapSettings<V>);
   constructor(
     itemsOrSettings?: Iterable<V> | DeltaMapSettings<V>,
     settings?: DeltaMapSettings<V>
   ) {
     super(itemsOrSettings as any, settings);
   }
-  
+
   /**
    * Process constructor content, can be overriden and extended in subclasses 
    */
-  protected override initializeContent(items: Iterable<any>): void {
+  protected override initializeContent(entries: Iterable<any>): void {
     // 
-    for (const item of items as Iterable<V>) {
-      this.doSet(item.id, item);
+    for (const entry of entries as Iterable<V>) {
+      this.doSet(entry.id, entry);
     }
   }
 

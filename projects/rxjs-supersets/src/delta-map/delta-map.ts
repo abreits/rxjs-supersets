@@ -20,9 +20,9 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   protected isUpdated?: IsModified<V>;
 
   constructor();
-  constructor(items: Iterable<Iterable<any>>);
+  constructor(entries: Iterable<Iterable<any>>);
   constructor(settings?: DeltaMapSettings<V>);
-  constructor(items: Iterable<Iterable<any>>, settings?: DeltaMapSettings<V>);
+  constructor(entries: Iterable<Iterable<any>>, settings?: DeltaMapSettings<V>);
   constructor(
     itemsOrSettings?: Iterable<any> | DeltaMapSettings<V>,
     settings?: DeltaMapSettings<V>
@@ -44,10 +44,10 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   /**
    * Process constructor content, can be overriden and extended in subclasses 
    */
-  protected initializeContent(items: Iterable<any>): void {
+  protected initializeContent(entries: Iterable<any>): void {
     // expect key value pairs
-    for (const item of items as Iterable<[K, V]>) {
-      this.doSet(item[0], item[1]);
+    for (const entry of entries as Iterable<[K, V]>) {
+      this.doSet(entry[0], entry[1]);
     }
   }
 

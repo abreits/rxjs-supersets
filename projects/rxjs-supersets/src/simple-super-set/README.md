@@ -3,18 +3,18 @@
 The `SimpleSuperSet` is a subclass of the [`DeltaSet`](../delta-set/README.md) class.
 
 The `SimpleSuperSet` is a simplified version of [`SuperSet`](../super-set/README.md) that does not allow subset subscriptions. 
-The items still implement the `MemberObject` interface. Its `memberOf` property defines the subsets that the item is a member of.
-If an item no longer is member of any subset it is also removed from the simple superset.
+The entries still implement the `MemberObject` interface. Its `memberOf` property defines the subsets that the entry is a member of.
+If an entry no longer is member of any subset it is also removed from the simple superset.
 
 The SimpleSuperSet `delta$` still publishes changes of all its content.
 
 ## Table of contents <!-- omit in toc -->
 - [Examples](#examples)
 - [Methods and properties](#methods-and-properties)
-  - [`add(item: T, addExistingSubSets = false)`](#additem-t-addexistingsubsets--false)
+  - [`add(entry: T, addExistingSubSets = false)`](#additem-t-addexistingsubsets--false)
   - [`deleteSubSetItems(subSetId: SubSetId): void`](#deletesubsetitemssubsetid-subsetid-void)
-  - [`subsets: SubsetMap<SubsetId, ReadonlyDeltaMap<ItemId, Item>>`](#subsets-subsetmapsubsetid-readonlydeltamapitemid-item)
-  - [`subsets.get(SubsetId): ReadonlyDeltaMap<ItemId, Item>>`](#subsetsgetsubsetid-readonlydeltamapitemid-item)
+  - [`subsets: SubsetMap<SubsetId, ReadonlyDeltaMap<ItemId, Item>>`](#subsets-subsetmapsubsetid-readonlydeltamapitemid-entry)
+  - [`subsets.get(SubsetId): ReadonlyDeltaMap<ItemId, Item>>`](#subsetsgetsubsetid-readonlydeltamapitemid-entry)
   - [`subsets.empty(subSetId: SubSetId): void`](#subsetsemptysubsetid-subsetid-void)
   - [`subsets.delete(subSetId: SubSetId): void`](#subsetsdeletesubsetid-subsetid-void)
 
@@ -32,12 +32,12 @@ The SimpleSuperSet `delta$` still publishes changes of all its content.
 The `SimpleSuperSet` class has the following additions and modifications to its [`DeltaSet`](../delta-set/README.md) superclass:
 
 
-### `add(item: T, addExistingSubSets = false)`
+### `add(entry: T, addExistingSubSets = false)`
 <ul><li style="list-style-type: none;">
 
-Adds a new item to the `SimpleSuperSet`.
-If `addExistingSubSets` is `true` any existing `SubSetId`'s from an existing item with the same Id will be merged into this item.
-If an item is not member of a subset (the `memberOf` set is empty) the entry will be deleted.
+Adds a new entry to the `SimpleSuperSet`.
+If `addExistingSubSets` is `true` any existing `SubSetId`'s from an existing entry with the same Id will be merged into this entry.
+If an entry is not member of a subset (the `memberOf` set is empty) the entry will be deleted.
 
 [back to top](#simplesuperset----omit-in-toc)
 </li></ul>
@@ -45,7 +45,7 @@ If an item is not member of a subset (the `memberOf` set is empty) the entry wil
 ### `deleteSubSetItems(subSetId: SubSetId): void`
 <ul><li style="list-style-type: none;">
 
-Deletes all items containing `subSetId` in their `subset` property from the `SimpleSuperSet`.
+Deletes all entries containing `subSetId` in their `subset` property from the `SimpleSuperSet`.
 
 Sends an update to all `subset`'s that have elements removed.
 
@@ -71,9 +71,9 @@ If a subset does not already exist, the `get` method creates a new empty `Readon
 ### `subsets.empty(subSetId: SubSetId): void`
 <ul><li style="list-style-type: none;">
 
-Removes the subSetId from the `subSet` property of all items in the `SimpleSuperSet`.
+Removes the subSetId from the `subSet` property of all entries in the `SimpleSuperSet`.
 
-If the resulting item `subSet` property is empty (it is no longer member of a subSet), the item is also deleted.
+If the resulting entry `subSet` property is empty (it is no longer member of a subSet), the entry is also deleted.
 Sends an update to the subscribers of the `subset.delta$` involved and to subscribers of 
 the `SuperSet.delta$` itself.
 

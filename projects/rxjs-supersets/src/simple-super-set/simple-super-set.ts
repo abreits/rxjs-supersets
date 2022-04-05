@@ -10,7 +10,7 @@ import { DeltaMapSettings, MemberObject, SimpleSubsetMap, } from '../types';
  * 
  * Allows you to automatically keep track of each subset content:
  * - Subscribe to subset `delta$` to get all changes
- * - If the item is not `memberOf` any subsets any more it will be deleted from the `SuperSet`
+ * - If the entry is not `memberOf` any subsets any more it will be deleted from the `SuperSet`
  */
 export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string> extends DeltaSet<V, K> {
   protected _subsets = new Map<M, Map<K, V>>();
@@ -62,27 +62,27 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
   }
 
   /**
-   * Adds or modifies a MemberObject item, notifies changes through _delta$_.
+   * Adds or modifies a MemberObject entry, notifies changes through _delta$_.
    * Also notifies the observed subsets that are involved.
    * 
-   * If an existing item is the same according to the _isEqual_ function, nothing is changed.
+   * If an existing entry is the same according to the _isEqual_ function, nothing is changed.
    * @override
    */
-  override add(item: V, mergeExistingSubsets = false): SimpleSuperSet<V, K, M> {
-    this.doAdd(item, mergeExistingSubsets);
+  override add(entry: V, mergeExistingSubsets = false): SimpleSuperSet<V, K, M> {
+    this.doAdd(entry, mergeExistingSubsets);
     this.publishDelta();
     return this;
   }
 
-  protected doAdd(item: V, mergeExistingSubsets: boolean) {
+  protected doAdd(entry: V, mergeExistingSubsets: boolean) {
     if (mergeExistingSubsets) {
-      const previtem = this.get(item.id);
-      previtem?.memberOf.forEach(subset => item.memberOf.add(subset));
+      const previtem = this.get(entry.id);
+      previtem?.memberOf.forEach(subset => entry.memberOf.add(subset));
     }
-    if (item.memberOf.size === 0) {
-      this.doDelete(item.id);
+    if (entry.memberOf.size === 0) {
+      this.doDelete(entry.id);
     } else {
-      this.doSet(item.id, item);
+      this.doSet(entry.id, entry);
     }
   }
 
@@ -90,25 +90,25 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
    * Extend _super.doSet_ to add subset processing
    * @override
    */
-  protected override doSet(id: K, item: V): void {
-    const previtem = this.get(item.id);
-    super.doSet(id, item);
-    this.updateSubsets(item, previtem);
+  protected override doSet(id: K, entry: V): void {
+    const previtem = this.get(entry.id);
+    super.doSet(id, entry);
+    this.updateSubsets(entry, previtem);
   }
 
-  protected updateSubsets(item: V, previtem: V | undefined) {
-    const newCategories = item.memberOf;
+  protected updateSubsets(entry: V, previtem: V | undefined) {
+    const newCategories = entry.memberOf;
     const oldCategories = previtem ? previtem.memberOf : new Set<M>();
-    // remove item from subsets it is no longer member of
+    // remove entry from subsets it is no longer member of
     oldCategories.forEach(subsetId => {
       if (!newCategories.has(subsetId)) {
-        // delete the item from all subsets it is member of (subsets.get should always return a value here)
-        (this._subsets.get(subsetId) as Map<K, V>).delete(item.id);
+        // delete the entry from all subsets it is member of (subsets.get should always return a value here)
+        (this._subsets.get(subsetId) as Map<K, V>).delete(entry.id);
       }
     });
-    // add item to all new subsets
+    // add entry to all new subsets
     newCategories.forEach(subset => {
-      this.getSubSet(subset).set(item.id, item);
+      this.getSubSet(subset).set(entry.id, entry);
     });
   }
 
@@ -117,34 +117,34 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
     * @override
     */
   protected override doDelete(id: K): any {
-    const item = this.get(id);
-    if (item) {
-      item.memberOf.forEach((_: any, subsetId: M) => (this._subsets.get(subsetId) as Map<K, V>).delete(id));
+    const entry = this.get(id);
+    if (entry) {
+      entry.memberOf.forEach((_: any, subsetId: M) => (this._subsets.get(subsetId) as Map<K, V>).delete(id));
     }
     return super.doDelete(id);
   }
 
   /**
-   * Empties the subset, deleting all items from the subset.
+   * Empties the subset, deleting all entries from the subset.
    * 
    * Items that are no longer member of another Subset will also be deleted from the SuperSet
    */
   protected emptySubSet(subsetId: M): void {
     const subset = this.getSubSet(subsetId);
-    subset.forEach(item => {
-      item.memberOf.delete(subsetId);
-      this.add(item);
+    subset.forEach(entry => {
+      entry.memberOf.delete(subsetId);
+      this.add(entry);
     });
     subset.clear();
   }
 
   /**
-   * Deletes the items in the subset from the SuperSet
+   * Deletes the entries in the subset from the SuperSet
    */
   deleteSubSetItems(subsetId: M): void {
     const subset = this.getSubSet(subsetId);
-    subset.forEach(item => {
-      this.doDelete(item.id);
+    subset.forEach(entry => {
+      this.doDelete(entry.id);
     });
     subset.clear();
   }

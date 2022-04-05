@@ -202,7 +202,7 @@ describe('SuperSet', () => {
       expect([...test.subsets].length).toEqual(2);
     });
 
-    it('should let empty(subsetId) clear the subset and remove items with no subset', () => {
+    it('should let empty(subsetId) clear the subset and remove entries with no subset', () => {
       test = new SuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);
@@ -243,7 +243,7 @@ describe('SuperSet', () => {
   });
 
   describe('deleteSubSetItems', () => {
-    it('should remove all items of the subset from the set', () => {
+    it('should remove all entries of the subset from the set', () => {
       test = new SuperSet();
       const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
       test.add(testContent);

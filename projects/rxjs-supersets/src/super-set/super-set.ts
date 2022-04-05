@@ -10,7 +10,7 @@ import { IsModified, MemberObject, ReadonlyDeltaMap, SubsetMap, SuperSetSettings
  * 
  * Allows you to automatically keep track of each subset content:
  * - Subscribe to subset `delta$` to get all changes
- * - If the item is not `memberOf` any subsets any more it will be deleted from the `SuperSet`
+ * - If the entry is not `memberOf` any subsets any more it will be deleted from the `SuperSet`
  */
 export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> extends SimpleSuperSet<V, K, M> {
   protected override _subsets = new Map<M, DeltaSet<V, K>>();
@@ -112,15 +112,15 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
   }
 
   /**
-   * Adds or modifies multiple MemberObject items at once and notifies changes through _delta$_.
+   * Adds or modifies multiple MemberObject entries at once and notifies changes through _delta$_.
    * Also notifies the observed subsets that are involved. 
    * 
-   * If an existing item is the same according to the _isEqual_ function, nothing is changed.
+   * If an existing entry is the same according to the _isEqual_ function, nothing is changed.
    */
-  override addMultiple(items: Iterable<V>, mergeExistingSubsets = false): void {
+  override addMultiple(entries: Iterable<V>, mergeExistingSubsets = false): void {
     this.doPauseSubsetDeltas();
-    for (const item of items) {
-      this.doAdd(item, mergeExistingSubsets);
+    for (const entry of entries) {
+      this.doAdd(entry, mergeExistingSubsets);
     }
     this.publishDelta();
     this.doResumeSubsetDeltas();
@@ -131,31 +131,31 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
     * @override
     */
   protected override doDelete(id: K): any {
-    const item = this.get(id);
-    if (item) {
-      item.memberOf.forEach((_: any, subsetId: M) => (this._subsets.get(subsetId) as DeltaSet<V, K>).delete(id));
+    const entry = this.get(id);
+    if (entry) {
+      entry.memberOf.forEach((_: any, subsetId: M) => (this._subsets.get(subsetId) as DeltaSet<V, K>).delete(id));
     }
     return super.doDelete(id);
   }
 
   /**
-   * Replaces all existing items with new items.
-   * - Adds _newitems_ not existing in the current items.
-   * - Updates existing items where _newitems_ have changed (_isEqual_ function).
-   * - Deletes items not existing in _newitems_.
+   * Replaces all existing entries with new entries.
+   * - Adds _newitems_ not existing in the current entries.
+   * - Updates existing entries where _newitems_ have changed (_isEqual_ function).
+   * - Deletes entries not existing in _newitems_.
    * 
    * Notifies all changes through _delta$_.
    * Also notifies all involved subset delta$ subscriptions. 
    * @override
    */
-  override replace(items: Iterable<V>): void {
+  override replace(entries: Iterable<V>): void {
     this.doPauseSubsetDeltas();
-    super.replace(items);
+    super.replace(entries);
     this.doResumeSubsetDeltas();
   }
 
   /**
-   * Deletes the items in the subset from the SuperSet
+   * Deletes the entries in the subset from the SuperSet
    * and thereby also from all other subsets in the superset.
    */
   override deleteSubSetItems(subsetId: M): void {

@@ -243,7 +243,7 @@ describe('DeltaMap', () => {
     });
 
     describe('constructor', () => {
-      it('should publish items defined in the constructor', () => {
+      it('should publish entries defined in the constructor', () => {
         const predefined = [
           [entry1.id, entry1],
           [entry2.id, entry2],
