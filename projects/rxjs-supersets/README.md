@@ -2,6 +2,8 @@
 
 A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that publish changes in their state (entries created, updated or deleted) using [RxJS](https://rxjs.dev/) Observables.
 
+For the latest changes and the current version see the [Change log](./CHANGELOG.md).
+
 # Table of contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
@@ -15,10 +17,6 @@ A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that
   - [DeltaSet example](#deltaset-example)
   - [settings example](#settings-example)
   - [SuperSet and SimpleSuperSet example](#superset-and-simplesuperset-example)
-- [Version history](#version-history)
-  - [1.0.0](#100)
-  - [0.10.0](#0100)
-  - [0.9.0](#090)
 # Introduction
 
 TODO: describe why it was created
@@ -288,38 +286,3 @@ superset.subsets.delete('subset1');
 
 ```
 [back to top](#rxjs-supersets----omit-in-toc)
-
-# Version history
-
-## 1.1.0
-- Fixes:
-  - `DeltaSet` constructor now processes predefined entries properly
-  - All delta maps and sets now publish predefined entries 
-## 1.0.0
-- Breaking changes:
-  - Renamed `added` to `created`
-  - Renamed `modified` to `updated`
-  - Renamed `deltaMap.destroy()` to `deltaMap.close()`
-  - Removed `pauseSubsetDeltas()` and `resumeSubsetDeltas()` methods from `SuperSet`
-- Code cleanup
-- Updated documentation
-- TODO:
-  - Further check and improve documentation
-  - Add more code examples
-  - implement github actions for CI/CD automation
-
-## 0.10.0
-- Added `subsets.pauseDeltas()` and `subsets.resumeDeltas()` methods to `SuperSet`
-- Deprecated `pauseSubsetDeltas()` and `resumeSubsetDeltas()` methods for `SuperSet`
-- Fixed `subsets.size` property for `Superset` and `SimpleSuperSet`
-- Optimized `subsets` for `Superset` and `SimpleSuperSet`
-- Updated documentation
-- TODO: 
-  - Improve documentation 
-  - Add more examples
-
-## 0.9.0
-- Initial public version
-- TODO: 
-  - Improve documentation
-  - Add more examples
