@@ -1,5 +1,5 @@
 import { DeltaSet } from '../delta-set/delta-set';
-import { SimpleSuperSet } from '../public-api';
+import { SimpleSuperSet } from '../simple-super-set/simple-super-set';
 import { IsModified, MemberObject, ReadonlyDeltaMap, SubsetMap, SuperSetSettings } from '../types';
 
 /**
