@@ -10,6 +10,7 @@ For the latest changes and the current version see the [Change log](./CHANGELOG.
 - [In detail](#in-detail)
   - [Maps and Sets](#maps-and-sets)
   - [RxJS operators](#rxjs-operators)
+  - [Utility functions](#utility-functions)
   - [DataTypes and Interfaces](#datatypes-and-interfaces)
 - [Examples](#examples)
   - [DeltaMap example](#deltamap-example)
@@ -53,9 +54,16 @@ A `processDelta` rxjs operator is provided to help processing the resulting `Map
 - [SimpleSuperSet](./src/simple-super-set/README.md), a simpler version of of the `SuperSet` that does not have subset subscription.
 
 ## RxJS operators
-- [processDelta](./src/process-delta/README.md)
+- [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the created property on the first _delta$_ subscription update.
+- [filterDelta](./src/operators/filter-delta/README.md) filters all created and updated elements of a _MapDelta_.
+- [mapDelta](./src/operators/process-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_.
+- [tapDelta](./src/operators/process-delta/README.md) can create side effects for all created, updated and deleted elements of a _MapDelta_.
+- [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
 
 
+## Utility functions
+- [processElements](src/support/process-elements/README.md) allows to process all elements in a `MapDelta`.
+- [createDelta](./src/support/create-delta/README.md) allows easy creation of dummy `MapDelta` structures for unit testing.
 ## DataTypes and Interfaces
 
 See [types.ts](./src/types.ts) for the type definitions of the types and interfaces used

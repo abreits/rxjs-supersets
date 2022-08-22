@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { processElements } from '../../support/process-elements/process-elements';
 
-import { MapDelta } from '../../types';
+import { IdObject, MapDelta } from '../../types';
 
 /**
  * Rxjs operator that performs side effects on the DeltaMap without changing its contents.
@@ -9,7 +10,7 @@ import { MapDelta } from '../../types';
  * Takes a handleFunctions parameter that contains optional functions to be called for each
  * created, deleted or updated entry.
  */
-export function tapDelta<K, V>(handlerFunctions: {
+export function tapDelta<V extends IdObject<K>, K = string>(handlerFunctions: {
   before?: () => void,
   create?: (value: Readonly<V>) => void,
   update?: (value: Readonly<V>) => void,
@@ -17,23 +18,7 @@ export function tapDelta<K, V>(handlerFunctions: {
   after?: () => void
 }): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
   return tap((delta: MapDelta<K, V>) => {
-    if (handlerFunctions.before) {
-      handlerFunctions.before();
-    }
-    handleEntries(delta.deleted, handlerFunctions.delete);
-    handleEntries(delta.updated, handlerFunctions.update);
-    handleEntries(delta.created, handlerFunctions.create);
-    if (handlerFunctions.after) {
-      handlerFunctions.after();
-    }
+    processElements(delta, handlerFunctions);
     return delta;
   });
-
-  function handleEntries<K, V>(set: ReadonlyMap<K, V>, fn?: (value: V) => void) {
-    if (fn) {
-      for (const entry of set.values()) {
-        fn(entry);
-      }
-    }
-  }
 }

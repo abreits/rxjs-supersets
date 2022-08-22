@@ -1,12 +1,23 @@
 # Change Log
 
 ## 1.2.0
-- Added `StartDelta()` operator
-- Added `tapDelta()` operator
-- Added `mapDelta()` operator
-- Added `filterDelta()` operator
-- Added `deltaMap.getDelta()` and `deltaMap.clearDelta()` methods
-- Updated documentation
+- Added new RxJS operators:
+  - Added `startDelta()` operator
+  - Added `tapDelta()` operator
+  - Added `mapDelta()` operator
+  - Added `filterDelta()` operator
+- Added new `DeltaMap` methods to support the new operators:
+  - Added `deltaMap.getDelta()` method
+  - Added `deltaMap.clearDelta()` method
+- Added support methods:
+  - Added `createDelta(fromDefinition)` function
+  - Added `processElements(handlerFunctions)` function
+- Updated documentation:
+  - Added documentation for the new additions
+- TODO:
+  - Further check and improve documentation
+  - Add more code examples
+  - implement github actions for CI/CD automation
 
 ## 1.1.0
 - Fixes:

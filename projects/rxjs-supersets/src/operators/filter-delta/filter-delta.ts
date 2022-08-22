@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { DeltaSet } from '../../delta-set/delta-set';
-import { map } from 'rxjs/operators';
 
 import { IdObject, MapDelta } from '../../types';
 
@@ -11,19 +10,34 @@ export function filterDelta<V extends IdObject<K>, K = string>(filterFunction: (
   const filterSet = new DeltaSet<V, K>();
   filterSet.pauseDelta();
 
-  return map((delta: MapDelta<K, V>) => {
-    if (delta.all.size === 0) {
-      // optimization for empty source map
-      filterSet.clear();
-    } else {
-      filterEntries(delta.updated);
-      filterEntries(delta.created);
-      deleteEntries(delta.deleted);
-    }
-    const newDelta = filterSet.getDelta();
-    filterSet.clearDelta();
-    return newDelta;
-  });
+  return function (source: Observable<MapDelta<K, V>>): Observable<MapDelta<K, V>> {
+    return new Observable(subscriber => {
+      const subscription = source.subscribe({
+        next(delta) {
+          if (delta.all.size === 0) {
+            // optimization for empty source map
+            filterSet.clear();
+          } else {
+            filterEntries(delta.updated);
+            filterEntries(delta.created);
+            deleteEntries(delta.deleted);
+          }
+          const newDelta = filterSet.getDelta();
+          filterSet.clearDelta();
+          if (newDelta.created.size > 0 || newDelta.updated.size > 0 || newDelta.deleted.size > 0) {
+            subscriber.next(newDelta);
+          }
+        },
+        error(error) {
+          subscriber.error(error);
+        },
+        complete() {
+          subscriber.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  };
 
   function filterEntries(set: ReadonlyMap<K, V>) {
     for (const entry of set.values()) {
