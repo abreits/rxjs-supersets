@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Subscription } from 'rxjs';
 
-import { processDelta } from '../process-delta/process-delta';
+import { processDelta } from '../operators/process-delta/process-delta';
 import { MemberObject, DeltaObservable } from '../types';
 
 import { SimpleSuperSet } from './simple-super-set';

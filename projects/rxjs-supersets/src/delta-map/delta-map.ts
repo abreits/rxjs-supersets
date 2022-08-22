@@ -28,7 +28,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
     settings?: DeltaMapSettings<V>
   ) {
     super();
-    this.initializeDelta();
+    this.clearDelta();
     if (itemsOrSettings && Symbol.iterator in Object(itemsOrSettings)) {
       this.initializeContent(itemsOrSettings as Iterable<any>);
       this.publishDelta();
@@ -59,26 +59,14 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
     this.publishEmpty = settings.publishEmpty === undefined ? true : settings.publishEmpty;
   }
 
-  private initializeDelta(): void {
-    this.created = new Map<K, V>();
-    this.deleted = new Map<K, V>();
-    this.updated = new Map<K, V>();
-    this.existedBeforeDelta = undefined;
-  }
-
   /**
    * Publish modification to delta$ if there are changes or if it is the first time called.
    */
   protected publishDelta(): void {
     if (this.publish && (this.created.size > 0 || this.updated.size > 0 || this.deleted.size > 0 || this.publishEmpty)) {
-      this.deltaSubject$.next({
-        all: this,
-        created: this.created,
-        updated: this.updated,
-        deleted: this.deleted
-      });
+      this.deltaSubject$.next(this.getDelta());
       this.publishEmpty = false;
-      this.initializeDelta();
+      this.clearDelta();
     }
   }
 
@@ -102,6 +90,31 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   resumeDelta(): void {
     this.publish = true;
     this.publishDelta();
+  }
+
+  /**
+   * Return current value of the delta
+   */
+  getDelta(): MapDelta<K, V> {
+    return {
+      all: this,
+      created: this.created,
+      updated: this.updated,
+      deleted: this.deleted
+    };
+  }
+
+  /**
+   * Clears the current delta without publishing updates to subscribers.
+   * 
+   * WARNING: This method can mess up publication integrity, 
+   * only use in DeltaMaps without subscriptions.
+   */
+  clearDelta(): void {
+    this.created = new Map<K, V>();
+    this.deleted = new Map<K, V>();
+    this.updated = new Map<K, V>();
+    this.existedBeforeDelta = undefined;
   }
 
   /**

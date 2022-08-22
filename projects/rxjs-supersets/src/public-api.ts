@@ -2,9 +2,12 @@
  * Public API Surface of deltamaps
  */
 
+export * from './types';
 export * from './delta-map/delta-map';
 export * from './delta-set/delta-set';
-export * from './process-delta/process-delta';
 export * from './simple-super-set/simple-super-set';
 export * from './super-set/super-set';
-export * from './types';
+// export * from './operators/map-delta/map-delta';
+export * from './operators/process-delta/process-delta';
+export * from './operators/start-delta/start-delta';
+// export * from './operators/tap-delta/tap-delta';

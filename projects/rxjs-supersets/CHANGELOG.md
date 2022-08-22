@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.2.0
+- Added `StartDelta()` operator
+- Added `tapDelta()` operator
+- Added `mapDelta()` operator
+- Added `filterDelta()` operator
+- Added `deltaMap.getDelta()` and `deltaMap.clearDelta()` methods
+- Updated documentation
+
 ## 1.1.0
 - Fixes:
   - `DeltaSet` constructor now processes entries defined in the constructor properly

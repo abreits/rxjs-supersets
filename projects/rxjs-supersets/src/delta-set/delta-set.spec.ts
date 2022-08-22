@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 
 import { DeltaMap } from '../delta-map/delta-map';
-import { processDelta } from '../process-delta/process-delta';
+import { processDelta } from '../operators/process-delta/process-delta';
 import { IdObject, MapDelta } from '../types';
 
 import { DeltaSet } from './delta-set';
