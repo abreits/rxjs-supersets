@@ -14,7 +14,6 @@
     "build-ci": "npm run lint && npm run test-ci && ng build",
     "publish": "npm run build-ci && npm publish dist/rxjs-supersets"
   },
-  "private": true,
   "dependencies": {
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0"
