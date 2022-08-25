@@ -7,7 +7,7 @@ import { IdObject, MapDelta } from '../../types';
 /**
  * RxJS operator that executes the specified _mappingFunction_ to all _created_ and _updated_ elements.
  */
-export function mapDelta<V1 extends IdObject<K>, V2 extends IdObject<K>, K = string>(mappingFunction: (entry: V1) => V2): (delta: Observable<MapDelta<K, V1>>) => Observable<MapDelta<K, V2>> {
+export function mapDelta<V1 extends Readonly<IdObject<K>>, V2 extends IdObject<K>, K = string>(mappingFunction: (entry: V1) => V2): (delta: Observable<MapDelta<K, V1>>) => Observable<MapDelta<K, V2>> {
   const mapSet = new DeltaSet<V2, K>();
   mapSet.pauseDelta();
 

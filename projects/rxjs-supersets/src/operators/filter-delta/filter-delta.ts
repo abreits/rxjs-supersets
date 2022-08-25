@@ -6,7 +6,7 @@ import { IdObject, MapDelta } from '../../types';
 /**
  * Rxjs operator that filters _created_ and _updated_ elements.
  */
-export function filterDelta<V extends IdObject<K>, K = string>(filterFunction: (entry: V) => boolean): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
+export function filterDelta<V extends Readonly<IdObject<K>>, K = string>(filterFunction: (entry: V) => boolean): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
   const filterSet = new DeltaSet<V, K>();
   filterSet.pauseDelta();
 

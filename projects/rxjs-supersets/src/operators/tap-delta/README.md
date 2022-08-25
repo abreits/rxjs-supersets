@@ -33,5 +33,26 @@ The order in which the methods are handled is:
 - `add` once for every `created` entry
 - `after` once
 
+## Examples
 
-[back to top](#processdeltahandlerfunctions)
+``` typescript
+observable.pipe(
+  startDelta(),
+  tapDelta({
+    add: element => addElement(element),
+    modify: element => modifyElement(element)
+  })
+).subscribe()
+  
+observable.pipe(
+  startDelta(),
+  tapDelta({
+    before: () => initialize(),
+    add: element => addElement(element),
+    delete: element => deleteElement(element),
+    after: () => cleanup()
+  })
+).subscribe()
+```
+
+[back to top](#tapdeltahandlerfunctions)

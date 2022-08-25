@@ -1,7 +1,11 @@
-# `mapDelta(mappingFunction: (entry) => modifiedEntry)`
+# `produceDelta(mappingFunction: (entry) => modifiedEntry)`
 
-The `mapDelta` RxJS operator operates on `MapDelta` structures.
-It performs the specified map operation to all `created` and `updated` items in the `MapDelta`.
+
+The `produceDelta` RxJS operator is a shorthand for `mapDelta(x => produce(x, y => ...))` when it returns the same object type.
+
+It uses the [Immer](https://immerjs.github.io/immer/) library to guarantee that the original element remains immutable.
+
+As with [mapDelta()](../map-delta/README.md), it performs the specified map operation to all `created` and `updated` items in the `MapDelta`.
 
 [back to main](../../../README.md)
 
@@ -21,14 +25,12 @@ const item3 = new IdContent('id3','content3');
 const deltaSet = new DeltaSet<string, IdContent>();
 deltaSet.addMultiple([item1, item2, item3]);
 
-// you can change (map) the content of all MapDelta elements using the mapDelta() operator.
-// It is best used along the 'immer' library
-import { produce } from 'immer';
+// you can change (map) the content of all MapDelta elements using the produceDelta() operator.
 deltaSet.delta$.pipe(
-  mapDelta(element => produce(element, draft => {
+  produceDelta(draft => {
     draft.id += 'm'; // you can even change it's id
     draft.extra = 'mapped!'; 
-  }))
+  })
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
   delta.created; // a map with new mapped entries
@@ -37,4 +39,4 @@ deltaSet.delta$.pipe(
 });
 
 ```
-[back to top](#mapdeltamappingfunction-entry--modifiedentry)
+[back to top](#producedeltamappingfunction-entry--modifiedentry)

@@ -1,5 +1,24 @@
 # Change Log
 
+## 1.3.0
+- Added new RxJS operator:
+  - Added `produceDelta()` operator
+- Fixed:
+  - Published missing operators and support functions
+  - Small fix in `DeltaMap.clear()` method
+- Deprecated:
+  - `processDelta()` operator
+- Removed:
+  - `before` and `after` properties from `processElements` call signature
+- Updated documentation:
+  - Added documentation for the new additions
+  - Added more code examples
+  - Fixed various documentation errors and inconsistencies
+- TODO:
+  - Further check and improve documentation
+  - Add more code examples
+  - implement github actions for CI/CD automation
+  
 ## 1.2.0
 - Added new RxJS operators:
   - Added `startDelta()` operator

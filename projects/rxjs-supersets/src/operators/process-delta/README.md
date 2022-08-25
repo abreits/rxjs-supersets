@@ -1,5 +1,7 @@
 # `processDelta(handlerFunctions?)`
 
+**DEPRECATED** use a combination of [startDelta()](../start-delta/README.md) and [tapDelta(...)](../tap-delta/README.md) or [processElements(...)](../../support/process-elements/README.md) instead.
+
 The `processDelta` RxJS operator processes `MapDelta` updates.
 It makes sure that the first result always contains all map entries in the `created` field.
 
@@ -33,5 +35,22 @@ The order in which the methods are handled is:
 - `add` once for every `created` entry
 - `after` once
 
+## Examples
+
+``` typescript
+observable.pipe(
+  processDelta({
+    add: element => addElement(element),
+    modify: element => modifyElement(element)
+  })
+).subscribe()
+  
+observable.pipe(
+  processDelta({
+    add: element => addElement(element),
+    delete: element => deleteElement(element)
+  })
+).subscribe()
+```
 
 [back to top](#processdeltahandlerfunctions)

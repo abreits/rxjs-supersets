@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { processElements } from '../../support/process-elements/process-elements';
+
+import { mapForEach } from '../../shared/map-for-each';
 
 import { IdObject, MapDelta } from '../../types';
 
@@ -10,7 +11,7 @@ import { IdObject, MapDelta } from '../../types';
  * Takes a handleFunctions parameter that contains optional functions to be called for each
  * created, deleted or updated entry.
  */
-export function tapDelta<V extends IdObject<K>, K = string>(handlerFunctions: {
+export function tapDelta<V extends Readonly<IdObject<K>>, K = string>(handlerFunctions: {
   before?: () => void,
   create?: (value: Readonly<V>) => void,
   update?: (value: Readonly<V>) => void,
@@ -18,7 +19,15 @@ export function tapDelta<V extends IdObject<K>, K = string>(handlerFunctions: {
   after?: () => void
 }): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
   return tap((delta: MapDelta<K, V>) => {
-    processElements(delta, handlerFunctions);
+    if (handlerFunctions.before) {
+      handlerFunctions.before();
+    }
+    mapForEach(delta.deleted, handlerFunctions.delete);
+    mapForEach(delta.updated, handlerFunctions.update);
+    mapForEach(delta.created, handlerFunctions.create);
+    if (handlerFunctions.after) {
+      handlerFunctions.after();
+    }
     return delta;
   });
 }

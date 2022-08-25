@@ -14,7 +14,7 @@ For the latest changes and the current version see the [Change log](./CHANGELOG.
   - [DataTypes and Interfaces](#datatypes-and-interfaces)
 - [Examples](#examples)
   - [DeltaMap example](#deltamap-example)
-  - [processDelta example](#processdelta-example)
+  - [operator examples](#operator-examples)
   - [DeltaSet example](#deltaset-example)
   - [settings example](#settings-example)
   - [SuperSet and SimpleSuperSet example](#superset-and-simplesuperset-example)
@@ -24,7 +24,7 @@ TODO: describe why it was created
 
 `rxjs-supersets` contains a number of Typescript `Map` and `Set` subclasses that have an [RxJS](https://rxjs.dev/) `Observable` property `delta$` that you can subscribe to if you want to be informed of the changes taking place in the `Set` or `Map`. It keeps track of addition, modification and deletion of entries in the `Set` or `Map`.
 
-`rxjs-supersets` has only one dependency ([tslib](https://github.com/Microsoft/tslib)) and one peer dependency ([rxjs](https://rxjs.dev/)).
+`rxjs-supersets` has only one dependency ([tslib](https://github.com/Microsoft/tslib)), one peer dependency ([rxjs](https://rxjs.dev/)) and one optional peer dependency ([immer](https://immerjs.github.io/immer/)).
 
 The content changes are published in `MapDelta` format:
 
@@ -56,9 +56,10 @@ A `processDelta` rxjs operator is provided to help processing the resulting `Map
 ## RxJS operators
 - [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the created property on the first _delta$_ subscription update.
 - [filterDelta](./src/operators/filter-delta/README.md) filters all created and updated elements of a _MapDelta_.
-- [mapDelta](./src/operators/process-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_.
-- [tapDelta](./src/operators/process-delta/README.md) can create side effects for all created, updated and deleted elements of a _MapDelta_.
-- [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
+- [mapDelta](./src/operators/map-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_, this can result in another class of `IdObject` for the processed elements.
+- [produceDelta](./src/operators/produce-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_ using the [immer](https://immerjs.github.io/immer/) `produce` function, this always results in the same class of `IdObject` for the processed elements.
+- [tapDelta](./src/operators/tap-delta/README.md) can create side effects for all created, updated and deleted elements of a _MapDelta_.
+- **Deprecated**: [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
 
 
 ## Utility functions
@@ -114,17 +115,17 @@ deltaMap.delta$.subscribe(delta => {
 ```
 [back to top](#rxjs-supersets----omit-in-toc)
 
-## processDelta example
+## operator examples
 
-`processDelta` is an RxJS operator that makes sure that you get all entries created when you first subscribe to a `delta$`. It works for all `rxjs-supersets` Maps and Sets.
+RxJS operators have been added to make working with MapDelta's easier.
 ``` typescript
 const deltaMap = new DeltaMap<string, Date>();
 deltaMap.set('item1', new Date());
 deltaMap.set('item2', new Date());
 
 // if you want a new subscription to always start with all in the created property
-// you can insert the processDelta() operator
-deltaMap.delta$.pipe(processDelta()).subscribe(delta => {
+// you can insert the startDelta() operator
+deltaMap.delta$.pipe(startDelta()).subscribe(delta => {
   delta.all;     // contains a map with both created entries
   delta.created; // contains a map with all entries on the first update
   delta.updated; // contains a map with no entries on the first update
@@ -132,14 +133,29 @@ deltaMap.delta$.pipe(processDelta()).subscribe(delta => {
 });
 
 // if you do not want to iterate through the updates yourself
-// you can also use the processDelta operator for this
-deltaMap.delta$.pipe(processDelta({
-  before: () => initUpdate(),     // call before update processing (optional)
-  create: entry => doAdd(entry),    // processes both entries one at a time (optional)
-  update: entry => doModify(entry), // ignored because there are no entries to process (optional)
-  delete: entry => doDelete(entry), // ignored because there are no entries to process (optional)
-  after: () => completeUpdate()   // call after update processing (optional)
-})).subscribe();
+// you can use the tapDelta operator for this
+deltaMap.delta$.pipe(
+  startDelta(),
+  tapDelta({
+    before: () => initUpdate(),     // call before update processing (optional)
+    create: entry => doAdd(entry),    // processes both entries one at a time (optional)
+    update: entry => doModify(entry), // ignored because there are no entries to process (optional)
+    delete: entry => doDelete(entry), // ignored because there are no entries to process (optional)
+    after: () => completeUpdate()   // call after update processing (optional)
+  })
+).subscribe();
+
+// if you only want to process certain elements of a MapDelta
+// you can use the filterDelta() operator
+deltaMap.delta$.pipe(startDelta(
+  filterDelta(element => element < Date.now())
+)).subscribe(delta => {
+  delta.all;     // contains a map with both created entries
+  delta.created; // contains a map with all entries on the first update
+  delta.updated; // contains a map with no entries on the first update
+  delta.deleted; // contains a map with no entries on the first update
+});
+
 ```
 [back to top](#rxjs-supersets----omit-in-toc)
 
@@ -152,12 +168,13 @@ deltaMap.delta$.pipe(processDelta({
 class IdContent implements IdObject {
   constructor (
     public id: string,
-    public content: string
+    public content: string,
+    public extra?: string
   ) { }
 }
-const item1 = new IdDate('id1','content1');
-const item2 = new IdDate('id2','content2');
-const item3 = new IdDate('id3','content3');
+const item1 = new IdContent('id1','content1');
+const item2 = new IdContent('id2','content2');
+const item3 = new IdContent('id3','content3');
 
 const deltaSet = new DeltaSet<string, IdContent>();
 deltaSet.addMultiple([item1, item2, item3]);
@@ -181,6 +198,29 @@ deltaSet.delta$.subscribe(delta => {
   delta.updated; // a map with item2b
   delta.deleted; // a map with no entries (nothing deleted)
 });
+
+// you can change (map) the content of all MapDelta elements using the
+// mapDelta() operator. It is best used along the 'immer' library
+import { produce } from 'immer';
+deltaSet.delta$.pipe(
+  mapDelta(element => produce(element, draft => {
+    draft.id += 'm'; // you can even change it's id
+    draft.extra = 'mapped!'; 
+  }))
+).subscribe(delta => {
+  delta.all;     // a map with all mapped entries
+  delta.created; // a map with new mapped entries
+  delta.updated; // a map with updated mapped entries
+  delta.deleted; // a map with deleted mapped entries
+});
+
+// if you return the same object type, you can simplify the above using the produceDelta() operator
+deltaSet.delta$.pipe(
+  produceDelta(draft => {
+    draft.id += 'm'; // you can even change it's id
+    draft.extra = 'mapped!'; 
+  })
+).subscribe();
 
 ```
 [back to top](#rxjs-supersets----omit-in-toc)
