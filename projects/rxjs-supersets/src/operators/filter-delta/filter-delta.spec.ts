@@ -1,3 +1,5 @@
+import { tap } from 'rxjs/operators';
+
 import { DeltaMap } from '../../delta-map/delta-map';
 import { MapDelta } from '../../types';
 
@@ -14,10 +16,12 @@ const element4 = { id: 'element4', value: 4 };
 describe('filterDelta', () => {
   it('should filter all entries', () => {
     let results!: MapDelta<string, IdValue>;
+    let received = false;
     let updated = false;
     const test = new DeltaMap<string, IdValue>();
 
     const subscription = test.delta$.pipe(
+      tap(() => received = true),
       filterDelta(element => element.value % 2 === 0)
     ).subscribe(result => {
       results = result;
@@ -102,10 +106,12 @@ describe('filterDelta', () => {
     expect(results.all.size).toBe(2);
 
     // test clearing all entries
+    received = false;
     updated = false;
     test.clear();
 
-    expect(updated).toBe(true);
+    expect(received).toBe(true);
+    expect(updated).toBe(false);
     expect(results.all.size).toBe(0);
 
     subscription.unsubscribe();
