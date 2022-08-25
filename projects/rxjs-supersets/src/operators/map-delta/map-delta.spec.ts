@@ -1,6 +1,5 @@
 import { DeltaMap } from '../../delta-map/delta-map';
 import { MapDelta } from '../../types';
-
 import { mapDelta } from './map-delta';
 
 type IdValue = { id: string, value: number };

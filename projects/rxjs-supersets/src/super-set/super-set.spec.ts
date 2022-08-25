@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Subscription } from 'rxjs';
 
-import { processDelta } from '../operators/process-delta/process-delta';
+import { tapDelta } from '../operators/tap-delta/tap-delta';
 import { MemberObject, DeltaObservable, MapDelta } from '../types';
 
 import { SuperSet } from './super-set';
@@ -31,7 +31,7 @@ describe('SuperSet', () => {
 
   function subscribeHandlers(observable: DeltaObservable<string, MemberObject>, results: string[]): void {
     subscriptions.push(
-      observable.pipe(processDelta({
+      observable.pipe(tapDelta({
         create: (entry: any) => results.push(`add:${entry.id}`),
         delete: (entry: any) => results.push(`delete:${entry.id}`),
         update: (entry: any) => results.push(`modify:${entry.id}`)

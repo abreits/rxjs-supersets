@@ -214,10 +214,14 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    */
   override clear(): any {
     if (this.deltaSubject$.observed) {
+      this.clearDelta();
       this.forEach((value, key) => this.deleted.set(key, value));
+      super.clear();
       this.publishDelta();
+    } else {
+      super.clear();
     }
-    super.clear();
+
   }
 
   /**

@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 
-import { processDelta } from '../operators/process-delta/process-delta';
+import { tapDelta } from '../operators/tap-delta/tap-delta';
 import { IdObject, MapDelta } from '../types';
 
 import { DeltaMap } from './delta-map';
@@ -222,7 +222,7 @@ describe('DeltaMap', () => {
 
     function subscribeHandlers(map: DeltaMap<string, IdObject>): void {
       subscriptions.push(
-        map.delta$.pipe(processDelta({
+        map.delta$.pipe(tapDelta({
           create: (entry) => subscriptionResults.push(`add:${entry.id}`),
           delete: (entry) => subscriptionResults.push(`delete:${entry.id}`),
           update: (entry) => subscriptionResults.push(`modify:${entry.id}`)
@@ -449,18 +449,6 @@ describe('DeltaMap', () => {
 
         // expected observe results:
         expect(subscriptionResults).toEqual([`add:${entry2a.id}`]);
-      });
-
-      it('should receive previously created entries', () => {
-        const test = new DeltaMap<string, any>();
-
-        test.set(entry1.id, entry1);
-        test.set(entry2.id, entry2);
-
-        subscribeHandlers(test);
-
-        // expected observe results:
-        expect(subscriptionResults).toEqual([`add:${entry1.id}`, `add:${entry2.id}`]);
       });
     });
 

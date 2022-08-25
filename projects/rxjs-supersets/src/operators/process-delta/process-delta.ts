@@ -4,11 +4,14 @@ import { map } from 'rxjs/operators';
 import { MapDelta } from '../../types';
 
 /**
+ * @deprecated use the _startDelta(), tapDelta()_ operator combination instead
+ * or use the _startDelta()_ operator and process the elements in the _subscribe()_ with the _processElements()_ function
+ * 
  * rxjs operator that passes _all_ entries in _added_ on the first passthrough
  * 
  * takes optional parameter that contains optional functions to be called for each
  * created, deleted or updated entry.
- */
+  **/
 export function processDelta<K, V>(handlerFunctions?: {
   before?: () => void,
   create?: (value: Readonly<V>) => void,

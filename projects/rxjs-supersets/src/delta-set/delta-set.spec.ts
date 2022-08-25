@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 
 import { DeltaMap } from '../delta-map/delta-map';
-import { processDelta } from '../operators/process-delta/process-delta';
+import { tapDelta } from '../operators/tap-delta/tap-delta';
 import { IdObject, MapDelta } from '../types';
 
 import { DeltaSet } from './delta-set';
@@ -99,7 +99,7 @@ describe('DeltaSet', () => {
 
       function subscribeHandlers(map: DeltaMap<string, any>): void {
         subscriptions.push(
-          map.delta$.pipe(processDelta({
+          map.delta$.pipe(tapDelta({
             create: (entry: any) => subscriptionResults.push(`create:${entry.id}`),
             delete: (entry: any) => subscriptionResults.push(`delete:${entry.id}`),
             update: (entry: any) => subscriptionResults.push(`update:${entry.id}`)
