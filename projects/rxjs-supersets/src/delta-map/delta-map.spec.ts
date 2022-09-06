@@ -67,17 +67,6 @@ describe('DeltaMap', () => {
       expect(test.get(entry2.id)).toBe(entry2a);
     });
 
-    it('should create a new ObservableMap with an isUpdated function in the settings', () => {
-      const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-
-      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
-
-      test.set(entry2a.id, entry2a);
-      test.set(entry2a2.id, entry2a2);
-
-      expect(test.get(entry2.id)).toBe(entry2a);
-    });
-
     it('should create a new ObservableMap with both predefined entries and settings', () => {
       const predefinedArray = [
         [entry1.id, entry1],
@@ -567,56 +556,135 @@ describe('DeltaMap', () => {
     });
   });
 
-  describe('protected publishChanges', () => {
-    it('should publish changes the first time it is updated, even if the set is empty', () => {
-      const results: MapDelta<string, IdObject>[] = [];
-      const test = new DeltaMap<string, IdObject>();
-      const subscription = test.delta$.subscribe(result => results.push(result));
-
-      test.delete(entry1.id);
-
-      // first action should trigger publication, even if it does not do anything
-      expect(results.length).toEqual(1);
-
-      test.delete(entry1.id);
-
-      // if nothing is changed later, no updates should be published
-      expect(results.length).toEqual(1);
-      subscription.unsubscribe();
+  describe('constructor settings', () => {
+    describe('isUpdated', () => {
+      it('an isUpdated function determines whether an update has occurred for the same id', () => {
+        const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
+  
+        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+  
+        test.set(entry2a.id, entry2a);
+        test.set(entry2a2.id, entry2a2);
+  
+        expect(test.get(entry2.id)).toBe(entry2a);
+      });
     });
 
-    it('should publish changes the first time it is updated, even if the set is empty, if publishEmpty setting is true', () => {
-      const results: MapDelta<string, IdObject>[] = [];
-      const test = new DeltaMap<string, IdObject>({ publishEmpty: true });
-      const subscription = test.delta$.subscribe(result => results.push(result));
+    describe('publishEmpty', () => {
+      it('should publish changes the first time it is updated, even if the set is empty', () => {
+        const results: MapDelta<string, IdObject>[] = [];
+        const test = new DeltaMap<string, IdObject>();
+        const subscription = test.delta$.subscribe(result => results.push(result));
 
-      test.delete(entry1.id);
+        test.delete(entry1.id);
 
-      // first action should trigger publication, even if it does not do anything
-      expect(results.length).toEqual(1);
+        // first action should trigger publication, even if it does not do anything
+        expect(results.length).toEqual(1);
 
-      test.delete(entry1.id);
+        test.delete(entry1.id);
 
-      // if nothing is changed later, no updates should be published
-      expect(results.length).toEqual(1);
-      subscription.unsubscribe();
+        // if nothing is changed later, no updates should be published
+        expect(results.length).toEqual(1);
+        subscription.unsubscribe();
+      });
+
+      it('should publish changes the first time it is updated, even if the set is empty, if publishEmpty setting is true', () => {
+        const results: MapDelta<string, IdObject>[] = [];
+        const test = new DeltaMap<string, IdObject>({ publishEmpty: true });
+        const subscription = test.delta$.subscribe(result => results.push(result));
+
+        test.delete(entry1.id);
+
+        // first action should trigger publication, even if it does not do anything
+        expect(results.length).toEqual(1);
+
+        test.delete(entry1.id);
+
+        // if nothing is changed later, no updates should be published
+        expect(results.length).toEqual(1);
+        subscription.unsubscribe();
+      });
+
+      it('should not publish for empty set if publishEmpty setting is false', () => {
+        const results: MapDelta<string, IdObject>[] = [];
+        const test = new DeltaMap<string, IdObject>({ publishEmpty: false });
+        const subscription = test.delta$.subscribe(result => results.push(result));
+
+        test.delete(entry1.id);
+
+        // first action not should trigger publication if it does not do anything
+        expect(results.length).toEqual(0);
+
+        test.delete(entry1.id);
+
+        // if nothing is changed later, no updates should be published
+        expect(results.length).toEqual(0);
+        subscription.unsubscribe();
+      });
+
+      it('should publish for empty set if settings are defined, but no publishEmpty setting is defined', () => {
+        const results: MapDelta<string, IdObject>[] = [];
+        const test = new DeltaMap<string, IdObject>({ copyAll: false });
+        const subscription = test.delta$.subscribe(result => results.push(result));
+
+        test.delete(entry1.id);
+
+        // first action should trigger publication, even if it does not do anything
+        expect(results.length).toEqual(1);
+
+        test.delete(entry1.id);
+
+        // if nothing is changed later, no updates should be published
+        expect(results.length).toEqual(1);
+        subscription.unsubscribe();
+      });
     });
 
-    it('should not publish for empty set if publishEmpty setting is false', () => {
-      const results: MapDelta<string, IdObject>[] = [];
-      const test = new DeltaMap<string, IdObject>({ publishEmpty: false });
-      const subscription = test.delta$.subscribe(result => results.push(result));
+    describe('copyAll', () => {
+      it('default it should not make a copy of the MapDelta.all for every update', () => {
+        const test = new DeltaMap<string, ContentIdObject>();
+  
+        test.set(entry2a.id, entry2a);
 
-      test.delete(entry1.id);
+        let same = false;
+        const subscription = test.delta$.subscribe(result => {
+          same = result.all === test;
+          expect(result.all.get(entry2a.id)).toEqual(entry2a);
+        });
+        expect(same).toBeTrue();
 
-      // first action not should trigger publication if it does not do anything
-      expect(results.length).toEqual(0);
+        subscription.unsubscribe();
+      });
 
-      test.delete(entry1.id);
+      it('when copyAll = false it should not make a copy of the MapDelta.all for every update', () => {
+        const test = new DeltaMap<string, ContentIdObject>({ copyAll: false });
+  
+        test.set(entry2a.id, entry2a);
 
-      // if nothing is changed later, no updates should be published
-      expect(results.length).toEqual(0);
-      subscription.unsubscribe();
+        let same = false;
+        const subscription = test.delta$.subscribe(result => {
+          same = result.all === test;
+          expect(result.all.get(entry2a.id)).toEqual(entry2a);
+        });
+        expect(same).toBeTrue();
+
+        subscription.unsubscribe();
+      });
+
+      it('when copyAll = true it should make a copy of the MapDelta.all for every update', () => {
+        const test = new DeltaMap<string, ContentIdObject>({ copyAll: true });
+  
+        test.set(entry2a.id, entry2a);
+
+        let same = true;
+        const subscription = test.delta$.subscribe(result => {
+          same = result.all === test;
+          expect(result.all.get(entry2a.id)).toEqual(entry2a);
+        });
+        expect(same).toBeFalse();
+
+        subscription.unsubscribe();
+      });
     });
   });
 });

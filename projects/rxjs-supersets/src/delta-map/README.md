@@ -53,14 +53,16 @@ The `DeltaMap` class adds or changes the following properties and methods of the
 ### `constructor`
 <ul><li style="list-style-type: none;">
 
-  The constructor for the `DeltaMap` class (called in `new DeltaMap<Key, Value>()`) can be used the same way as the `Map` constructor. It also accepts a settings argument instead or after the `preFilled` content argument. The `DeltaMapSettings` structure can contain the following two properties:
+  The constructor for the `DeltaMap` class (called in `new DeltaMap<Key, Value>()`) can be used the same way as the `Map` constructor. It also accepts a settings argument instead or after the `preFilled` content argument. The `DeltaMapSettings` structure can contain the following properties:
 
   - `isUpdated?: (T) => boolean` By default when an entry is `set` in the `DeltaMap` with an `Id` key that is already present, it is assumed that it is newer and the existing key will be updated to the `set` entry. 
   An `isUpdated` function can be created to only update the value when certain conditions have been met (e.g. the `date` property of the `set` entry must be more recent than the exisiting entry)
 
-  - `publishEmpty?: boolean` By default a `DeltaMap` only publishes when someting changes from the default empty `DeltaMap`. 
-  There are certain cases when a subscription wants to know if the `DeltaMap` is initially empty.
-  You can set `publishempty` to `true` when you want the empty `DeltaMap` to publish its initial state, even if it is.
+  - `publishEmpty?: boolean` Defaults to `true`, by default a `DeltaMap` always publishes initially, even when the `DeltaMap` is empty. 
+  There are certain cases when you do not want to bother your subscriptions if the `DeltaMap` is initially empty.
+  You can set `publishEmpty` to `false` when you do not want the empty `DeltaMap` to publish its initial state.
+
+  - `copyAll?: boolean` Defaults to `false`, by default the `delta$` publishes the full existing map as `Readonly` in the `all` property for all `MapDelta` updates it publishes for efficiency reasons. Most of the time this is no problem, however if the full set changes before the mapDelta is processed this could become a problem in edge cases. If this property is set to `true` it publishes a shallow copy of the full map at the time of publication to prevent these problems from occuring. This of course can have a serious impact on larger maps.
 
   Possible call options:
   ``` typescript

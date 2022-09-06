@@ -16,6 +16,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
 
   private publishEmpty = true;
   private publish = true;
+  private copyAll = false;
 
   protected isUpdated?: IsModified<V>;
 
@@ -56,7 +57,8 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    */
   protected initializeSettings(settings: DeltaMapSettings<V>): void {
     this.isUpdated = settings.isUpdated;
-    this.publishEmpty = settings.publishEmpty === undefined ? true : settings.publishEmpty;
+    this.publishEmpty = settings.publishEmpty ?? true;
+    this.copyAll = settings.copyAll ?? false;
   }
 
   /**
@@ -97,7 +99,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    */
   getDelta(): MapDelta<K, V> {
     return {
-      all: this,
+      all: this.copyAll ? new Map(this) : this,
       created: this.created,
       updated: this.updated,
       deleted: this.deleted

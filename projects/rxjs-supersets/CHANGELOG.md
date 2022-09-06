@@ -1,5 +1,7 @@
 # Change Log
 
+## 1.4.0
+- Added a `copyAll` property to the DeltaMap settings
 ## 1.3.0
 - Added new RxJS operator:
   - Added `produceDelta()` operator
