@@ -147,9 +147,10 @@ deltaMap.delta$.pipe(
 
 // if you only want to process certain elements of a MapDelta
 // you can use the filterDelta() operator
-deltaMap.delta$.pipe(startDelta(
+deltaMap.delta$.pipe(
+  startDelta(),
   filterDelta(element => element < Date.now())
-)).subscribe(delta => {
+).subscribe(delta => {
   delta.all;     // contains a map with both created entries
   delta.created; // contains a map with all entries on the first update
   delta.updated; // contains a map with no entries on the first update
