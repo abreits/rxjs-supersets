@@ -1,6 +1,8 @@
 import { Subscription } from 'rxjs';
-import { DeltaSet } from 'rxjs-supersets';
+
+import { DeltaSet } from '../../delta-set/delta-set';
 import { GroupObject, IdObject, MapDelta } from '../../types';
+
 import { groupDelta } from './group-delta';
 
 interface TestIdObject extends IdObject {
