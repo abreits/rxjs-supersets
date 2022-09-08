@@ -1,17 +1,21 @@
-import { Observable } from 'rxjs';
-import { DeltaSet } from '../../delta-set/delta-set';
 import { map } from 'rxjs/operators';
 
-import { IdObject, MapDelta } from '../../types';
+import { DeltaObservable, IdObject, MapDelta } from '../../types';
+import { DeltaSet } from '../../delta-set/delta-set';
 
 /**
  * RxJS operator that executes the specified _mappingFunction_ to all _created_ and _updated_ elements.
  */
-export function mapDelta<V1 extends Readonly<IdObject<K>>, V2 extends IdObject<K>, K = string>(mappingFunction: (entry: V1) => V2): (delta: Observable<MapDelta<K, V1>>) => Observable<MapDelta<K, V2>> {
-  const mapSet = new DeltaSet<V2, K>();
+export function mapDelta<
+  VO extends Readonly<IdObject<KO>>, // Value Origin
+  VM extends IdObject<KM>,           // Value Mapped
+  KO = string,                       // Key Origin
+  KM = string                        // Key Mapped 
+>(mappingFunction: (entry: VO) => VM): (delta: DeltaObservable<KO, VO>) => DeltaObservable<KM, VM> {
+  const mapSet = new DeltaSet<VM, KM>();
   mapSet.pauseDelta();
 
-  return map((delta: MapDelta<K, V1>) => {
+  return map((delta: MapDelta<KO, VO>) => {
     if (delta.all.size === 0) {
       // optimization for empty source map
       mapSet.clear();
@@ -25,13 +29,13 @@ export function mapDelta<V1 extends Readonly<IdObject<K>>, V2 extends IdObject<K
     return newDelta;
   });
 
-  function mapEntries(set: ReadonlyMap<K, V1>) {
+  function mapEntries(set: ReadonlyMap<KO, VO>) {
     for (const entry of set.values()) {
       mapSet.add(mappingFunction(entry));
     }
   }
 
-  function deleteEntries(set: ReadonlyMap<K, V1>) {
+  function deleteEntries(set: ReadonlyMap<KO, VO>) {
     for (const entry of set.values()) {
       mapSet.delete(mappingFunction(entry).id);
     }

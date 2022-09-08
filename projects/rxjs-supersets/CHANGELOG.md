@@ -1,5 +1,14 @@
 # Change Log
 
+## 1.5.0
+- Added `groupDelta` operator
+- Fixed missing operator exports:
+  - `filterDelta`
+  - `produceDelta`
+- Code cleanup
+- Updated documentation
+- - TODO:
+  - implement github actions for CI/CD automation
 ## 1.4.0
 - Added a `copyAll` property to the DeltaMap settings
 ## 1.3.0

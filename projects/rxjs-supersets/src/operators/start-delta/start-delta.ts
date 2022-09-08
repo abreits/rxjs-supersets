@@ -1,12 +1,14 @@
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { MapDelta } from '../../types';
+import { DeltaObservable, IdObject, MapDelta } from '../../types';
 
 /**
  * rxjs operator that passes _all_ entries in _added_ on the first passthrough
  */
-export function startDelta<K, V>(): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
+export function startDelta<
+  V extends Readonly<IdObject<K>>,
+  K = string
+>(): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
   let started = false;
   return map((delta: MapDelta<K, V>) => {
     if (!started) {

@@ -1,7 +1,6 @@
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { MapDelta } from '../../types';
+import { DeltaObservable, IdObject, MapDelta } from '../../types';
 
 /**
  * @deprecated use the _startDelta(), tapDelta()_ operator combination instead
@@ -12,13 +11,16 @@ import { MapDelta } from '../../types';
  * takes optional parameter that contains optional functions to be called for each
  * created, deleted or updated entry.
   **/
-export function processDelta<K, V>(handlerFunctions?: {
+export function processDelta<
+  V extends Readonly<IdObject<K>>,
+  K = string
+>(handlerFunctions?: {
   before?: () => void,
   create?: (value: Readonly<V>) => void,
   update?: (value: Readonly<V>) => void,
   delete?: (value: Readonly<V>) => void,
   after?: () => void
-}): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
+}): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
   let started = false;
   return map((delta: MapDelta<K, V>) => {
     if (!started) {

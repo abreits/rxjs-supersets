@@ -18,6 +18,28 @@ export interface MemberObject<K = string, C = string> extends IdObject<K> {
   memberOf: Set<C>;
 }
 
+export declare interface GroupObjectType<
+  VE extends Readonly<IdObject<KE>>,  // Value Entry
+  VG extends GroupObject<VE, KG, KE>, // Value Group
+  KE = string,                        // Key Entry
+  KG = string                         // Key Group
+> extends Function {
+  new(id: KG): VG;
+}
+
+export abstract class GroupObject<T extends IdObject<KE>, KG = string, KE = string> implements IdObject<KG> {
+  constructor(public id: KG) { }
+  /**
+   * Adds a member to the GroupObject
+   */
+  abstract add(idObject: T): void;
+  /**
+   * Removes a member from the GroupObject,
+   * should return _true_ if the remaining group is not empty, _false_ if it is
+   */
+  abstract remove(idObject: T): boolean;
+}
+
 export interface ReadonlyDeltaMap<K, V> extends ReadonlyMap<K, V> {
   readonly delta$: DeltaObservable<K, V>;
 }

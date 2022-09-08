@@ -20,7 +20,9 @@ For the latest changes and the current version see the [Change log](./CHANGELOG.
   - [SuperSet and SimpleSuperSet example](#superset-and-simplesuperset-example)
 # Introduction
 
-TODO: describe why it was created
+This library was created to support subscribing to streams of updates to a `Map` or `Set`.
+Subscribers will always get the current `Map` or `Set` state when they subscribe,
+along with updates from that point onward.
 
 `rxjs-supersets` contains a number of Typescript `Map` and `Set` subclasses that have an [RxJS](https://rxjs.dev/) `Observable` property `delta$` that you can subscribe to if you want to be informed of the changes taking place in the `Set` or `Map`. It keeps track of addition, modification and deletion of entries in the `Set` or `Map`.
 
@@ -54,16 +56,18 @@ A `processDelta` rxjs operator is provided to help processing the resulting `Map
 - [SimpleSuperSet](./src/simple-super-set/README.md), a simpler version of of the `SuperSet` that does not have subset subscription.
 
 ## RxJS operators
-- [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the created property on the first _delta$_ subscription update.
+
 - [filterDelta](./src/operators/filter-delta/README.md) filters all created and updated elements of a _MapDelta_.
+- [groupDelta](./src/operators/group-delta/README.md) moves _MapDelta_ `IdObject` entries into groups and forwards the result as a _MapDelta_.
 - [mapDelta](./src/operators/map-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_, this can result in another class of `IdObject` for the processed elements.
 - [produceDelta](./src/operators/produce-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_ using the [immer](https://immerjs.github.io/immer/) `produce` function, this always results in the same class of `IdObject` for the processed elements.
+- [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the created property on the first _delta$_ subscription update.
 - [tapDelta](./src/operators/tap-delta/README.md) can create side effects for all created, updated and deleted elements of a _MapDelta_.
 - **Deprecated**: [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
 
 
 ## Utility functions
-- [processElements](src/support/process-elements/README.md) allows to process all elements in a `MapDelta`.
+- [processElements](src/support/process-elements/README.md) allows easy processing of all elements in a `MapDelta`.
 - [createDelta](./src/support/create-delta/README.md) allows easy creation of dummy `MapDelta` structures for unit testing.
 ## DataTypes and Interfaces
 

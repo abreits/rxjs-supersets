@@ -1,16 +1,19 @@
 import { Observable } from 'rxjs';
 import { DeltaSet } from '../../delta-set/delta-set';
 
-import { IdObject, MapDelta } from '../../types';
+import { DeltaObservable, IdObject } from '../../types';
 
 /**
  * Rxjs operator that filters _created_ and _updated_ elements.
  */
-export function filterDelta<V extends Readonly<IdObject<K>>, K = string>(filterFunction: (entry: V) => boolean): (delta: Observable<MapDelta<K, V>>) => Observable<MapDelta<K, V>> {
+export function filterDelta<
+  V extends Readonly<IdObject<K>>,
+  K = string
+>(filterFunction: (entry: V) => boolean): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
   const filterSet = new DeltaSet<V, K>();
   filterSet.pauseDelta();
 
-  return function (source: Observable<MapDelta<K, V>>): Observable<MapDelta<K, V>> {
+  return function (source: DeltaObservable<K, V>): DeltaObservable<K, V> {
     return new Observable(subscriber => {
       const subscription = source.subscribe({
         next(delta) {
