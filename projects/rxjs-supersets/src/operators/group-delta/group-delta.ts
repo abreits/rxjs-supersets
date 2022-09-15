@@ -13,7 +13,11 @@ export function groupDelta<
   VG extends GroupObject<VE, KG, KE>, // Value Group
   KE = string,                        // Key Entry
   KG = string                         // Key Group
->(GroupClass: GroupObjectType<VE, VG, KE, KG>, createGroupId: (entry: VE) => KG): (delta: DeltaObservable<KE, VE>) => DeltaObservable<KG, VG> {
+>(
+  GroupClass: GroupObjectType<VE, VG, KE, KG>,
+  createGroupId: (entry: VE) => KG,
+  groupFilter: (entry: VE) => boolean = () => true
+): (delta: DeltaObservable<KE, VE>) => DeltaObservable<KG, VG> {
   const groupEntryMap = new Map<KE, VG>();
   const groupSet = new DeltaSet<VG, KG>();
   groupSet.pauseDelta();
@@ -34,22 +38,24 @@ export function groupDelta<
 
   function addEntries(set: ReadonlyMap<KE, VE>) {
     for (const entry of set.values()) {
-      const lastGroup = groupEntryMap.get(entry.id);
-      const groupId = createGroupId(entry);
+      if (groupFilter(entry)) {
+        const lastGroup = groupEntryMap.get(entry.id);
+        const groupId = createGroupId(entry);
 
-      // check if moved to other group
-      if (lastGroup && lastGroup.id !== groupId) {
-        // moved to other group, delete entry from last group
-        if (lastGroup.remove(entry)) {
-          groupSet.add(lastGroup); // update, group still has items remaining
-        } else {
-          groupSet.delete(lastGroup.id); // group has no items remaining, so delete it
+        // check if moved to other group
+        if (lastGroup && lastGroup.id !== groupId) {
+          // moved to other group, delete entry from last group
+          if (lastGroup.remove(entry)) {
+            groupSet.add(lastGroup); // update, group still has items remaining
+          } else {
+            groupSet.delete(lastGroup.id); // group has no items remaining, so delete it
+          }
         }
-      }
 
-      const group = getGroup(groupId, entry);
-      groupEntryMap.set(entry.id, group);
-      groupSet.add(group);
+        const group = getGroup(groupId, entry);
+        groupEntryMap.set(entry.id, group);
+        groupSet.add(group);
+      }
     }
   }
 

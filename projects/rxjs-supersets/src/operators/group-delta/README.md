@@ -1,7 +1,9 @@
-# `groupDelta(GroupClass: GroupObject, createGroupId: (sourceEntry) => groupId)`
+# `groupDelta(GroupClass: GroupObject, createGroupId: (sourceEntry) => groupId, groupFilter?: (sourceEntry) => boolean)`
 
 The `groupDelta` RxJS operator operates on `MapDelta` structures.
 It groups the incoming `IdObject` entries into `GroupObject` subclass entries.
+It has the option to process only specific entries by defining a `groupFilter` function,
+this function returns _true_ if the entry must be grouped.
 
 The group the entry is placed into is determined by the supplied `createGroupId()` function.
 

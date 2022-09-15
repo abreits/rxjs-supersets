@@ -1,6 +1,7 @@
 # Change Log
 
 ## 2.0.0
+- Added optional `groupFilter` parameter to `groupDelta` operator
 - Breaking changes:
   - renamed all occurences of 'created' properties back to 'added'
   - renamed all occurences of 'updated' properties back to 'modified'
