@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.0.1
+- Fix:
+  - renamed `isUpdated` property to `isModified` in `DeltaMapSettings`
+
 ## 2.0.0
 - Added optional `groupFilter` parameter to `groupDelta` operator
 - Breaking changes:

@@ -59,7 +59,7 @@ describe('DeltaMap', () => {
     it('should create a new ObservableMap with an isUpdated function in the settings', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
 
-      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -74,7 +74,7 @@ describe('DeltaMap', () => {
       ];
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
 
-      const test = new DeltaMap<string, ContentIdObject>(predefinedArray, { isUpdated: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>(predefinedArray, { isModified: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -122,7 +122,7 @@ describe('DeltaMap', () => {
 
     it('should overwrite existing entries when the isUpdated function returns true', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2b.id, entry2b);
@@ -132,7 +132,7 @@ describe('DeltaMap', () => {
 
     it('should not overwrite existing entries when the ismodified function returns false', () => {
       const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-      const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+      const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
 
       test.set(entry2a.id, entry2a);
       test.set(entry2a2.id, entry2a2);
@@ -414,7 +414,7 @@ describe('DeltaMap', () => {
 
       it('should overwrite existing entries when the isUpdated function returns true', () => {
         const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+        const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
         subscribeHandlers(test as any); // typescript does not recognize type compatibility, bug?
 
         test.set(entry2a.id, entry2a);
@@ -428,7 +428,7 @@ describe('DeltaMap', () => {
 
       it('should not overwrite existing entries when the isUpdated function returns false', () => {
         const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
-        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+        const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
         subscribeHandlers(test as any); // typescript does not recognize type compatibility, bug?
 
         test.set(entry2a.id, entry2a);
@@ -561,7 +561,7 @@ describe('DeltaMap', () => {
       it('an isUpdated function determines whether an update has occurred for the same id', () => {
         const isModifiedFunction = (a: ContentIdObject, b: ContentIdObject) => a.content !== b.content;
   
-        const test = new DeltaMap<string, ContentIdObject>({ isUpdated: isModifiedFunction });
+        const test = new DeltaMap<string, ContentIdObject>({ isModified: isModifiedFunction });
   
         test.set(entry2a.id, entry2a);
         test.set(entry2a2.id, entry2a2);

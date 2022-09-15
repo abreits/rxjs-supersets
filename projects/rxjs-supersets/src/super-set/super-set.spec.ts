@@ -61,7 +61,7 @@ describe('SuperSet', () => {
       expect((test1 as any).isModifiedSubSet).not.toBeDefined();
       expect((test1 as any).publishEmptySubSet).toEqual(true);
 
-      const test2 = new SuperSet({ subsets: { isUpdated: () => true, publishEmpty: false } });
+      const test2 = new SuperSet({ subsets: { isModified: () => true, publishEmpty: false } });
       // quick test if the protected subset settings are correctly set ()
       expect((test2 as any).isModifiedSubSet).toBeDefined();
       expect((test2 as any).publishEmptySubSet).toEqual(false);
@@ -527,7 +527,7 @@ describe('SuperSet', () => {
         const isUpdated = (a: MemberObject, b: MemberObject) => true;
         // all subset modify's are defined as equal
         const isModifiedInSubSet = (a: MemberObject, b: MemberObject) => false;
-        test = new SuperSet({ isUpdated, subsets: { isUpdated: isModifiedInSubSet } });
+        test = new SuperSet({ isModified: isUpdated, subsets: { isModified: isModifiedInSubSet } });
         subscribeHandlers(test.delta$, subscriptionResults);
         SubSet1Results = [];
         subscribeHandlers(test.subsets.get('SubSet1').delta$, SubSet1Results);

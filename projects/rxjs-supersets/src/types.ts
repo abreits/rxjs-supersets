@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 export interface DeltaMapSettings<T> {
-  isUpdated?: IsModified<T>; // function to determine whether an existing entry is modified
+  isModified?: IsModified<T>; // function to determine whether an existing entry is modified
   publishEmpty?: boolean;    // always publish delta on first action, even if the map is still empty (default: true)
   copyAll?: boolean;         // create a copy of all map elements for each MapDelta update
 }

@@ -56,7 +56,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Process constructor settings, can be overriden and extended in subclasses
    */
   protected initializeSettings(settings: DeltaMapSettings<V>): void {
-    this.isUpdated = settings.isUpdated;
+    this.isUpdated = settings.isModified;
     this.publishEmpty = settings.publishEmpty ?? true;
     this.copyAll = settings.copyAll ?? false;
   }

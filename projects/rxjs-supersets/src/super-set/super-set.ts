@@ -63,7 +63,7 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
   protected override getSubSet(subsetId: M): DeltaSet<V, K> {
     let subset = this._subsets.get(subsetId);
     if (!subset) {
-      subset = new DeltaSet<V, K>({ isUpdated: this.isModifiedSubSet, publishEmpty: this.publishEmptySubSet });
+      subset = new DeltaSet<V, K>({ isModified: this.isModifiedSubSet, publishEmpty: this.publishEmptySubSet });
       this._subsets.set(subsetId, subset);
       if (!this.publishSubSetUpdates) {
         subset.pauseDelta();
@@ -77,7 +77,7 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
    */
   protected override initializeSettings(settings: SuperSetSettings<V>): void {
     super.initializeSettings(settings);
-    this.isModifiedSubSet = settings.subsets?.isUpdated;
+    this.isModifiedSubSet = settings.subsets?.isModified;
     this.publishEmptySubSet = settings.subsets?.publishEmpty === undefined ? true : settings.subsets.publishEmpty;
   }
 
