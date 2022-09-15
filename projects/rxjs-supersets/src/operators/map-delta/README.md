@@ -31,8 +31,8 @@ deltaSet.delta$.pipe(
   }))
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
-  delta.created; // a map with new mapped entries
-  delta.updated; // a map with updated mapped entries
+  delta.added; // a map with new mapped entries
+  delta.modified; // a map with updated mapped entries
   delta.deleted; // a map with deleted mapped entries
 });
 

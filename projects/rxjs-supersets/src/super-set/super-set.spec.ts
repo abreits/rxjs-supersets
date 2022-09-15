@@ -8,9 +8,9 @@ import { SuperSet } from './super-set';
 
 // debugging support function
 // function printSubSet(subset: any) {
-//   console.log('created:', [...subset.created.keys()])
+//   console.log('added:', [...subset.added.keys()])
 //   console.log('deleted:', [...subset.deleted.keys()])
-//   console.log('updated:', [...subset.updated.keys()])
+//   console.log('modified:', [...subset.modified.keys()])
 // }
 
 class ContentClass implements MemberObject {
@@ -32,9 +32,9 @@ describe('SuperSet', () => {
   function subscribeHandlers(observable: DeltaObservable<string, MemberObject>, results: string[]): void {
     subscriptions.push(
       observable.pipe(tapDelta({
-        create: (entry: any) => results.push(`add:${entry.id}`),
+        add: (entry: any) => results.push(`add:${entry.id}`),
         delete: (entry: any) => results.push(`delete:${entry.id}`),
-        update: (entry: any) => results.push(`modify:${entry.id}`)
+        modify: (entry: any) => results.push(`modify:${entry.id}`)
       })).subscribe()
     );
   }
@@ -299,9 +299,9 @@ describe('SuperSet', () => {
 
         expect(test.size).toEqual(4);
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].created.size).toEqual(4);
+        expect(SubSet1delta$Updates[0].added.size).toEqual(4);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].created.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].added.size).toEqual(2);
       });
     });
 
@@ -402,9 +402,9 @@ describe('SuperSet', () => {
         test.subsets.resumeDeltas();
 
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].created.size).toEqual(4);
+        expect(SubSet1delta$Updates[0].added.size).toEqual(4);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].created.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].added.size).toEqual(2);
       });
 
       it('should only publish a replace update after resumeSubSetUpdates', () => {
@@ -441,13 +441,13 @@ describe('SuperSet', () => {
 
         expect(test.size).toEqual(4);
         expect(SubSet1delta$Updates.length).toEqual(1);
-        expect(SubSet1delta$Updates[0].created.size).toEqual(0);
+        expect(SubSet1delta$Updates[0].added.size).toEqual(0);
         expect(SubSet1delta$Updates[0].deleted.size).toEqual(1);
-        expect(SubSet1delta$Updates[0].updated.size).toEqual(3);
+        expect(SubSet1delta$Updates[0].modified.size).toEqual(3);
         expect(SubSet2delta$Updates.length).toEqual(1);
-        expect(SubSet2delta$Updates[0].created.size).toEqual(0);
+        expect(SubSet2delta$Updates[0].added.size).toEqual(0);
         expect(SubSet2delta$Updates[0].deleted.size).toEqual(0);
-        expect(SubSet2delta$Updates[0].updated.size).toEqual(2);
+        expect(SubSet2delta$Updates[0].modified.size).toEqual(2);
       });
     });
 

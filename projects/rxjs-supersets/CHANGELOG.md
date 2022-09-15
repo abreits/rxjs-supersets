@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.0.0
+- Breaking changes:
+  - renamed all occurences of 'created' properties back to 'added'
+  - renamed all occurences of 'updated' properties back to 'modified'
+- Other changes:
+  - `processDelta()` operator is no longer deprecated
+
 ## 1.5.0
 - Added `groupDelta` operator
 - Fixed missing operator exports:

@@ -20,8 +20,8 @@ export function mapDelta<
       // optimization for empty source map
       mapSet.clear();
     } else {
-      mapEntries(delta.updated);
-      mapEntries(delta.created);
+      mapEntries(delta.modified);
+      mapEntries(delta.added);
       deleteEntries(delta.deleted);
     }
     const newDelta = mapSet.getDelta();

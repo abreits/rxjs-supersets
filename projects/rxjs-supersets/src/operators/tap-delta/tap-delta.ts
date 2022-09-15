@@ -15,8 +15,8 @@ export function tapDelta<
   K = string
 >(handlerFunctions: {
   before?: () => void,
-  create?: (value: Readonly<V>) => void,
-  update?: (value: Readonly<V>) => void,
+  add?: (value: Readonly<V>) => void,
+  modify?: (value: Readonly<V>) => void,
   delete?: (value: Readonly<V>) => void,
   after?: () => void
 }): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
@@ -25,8 +25,8 @@ export function tapDelta<
       handlerFunctions.before();
     }
     mapForEach(delta.deleted, handlerFunctions.delete);
-    mapForEach(delta.updated, handlerFunctions.update);
-    mapForEach(delta.created, handlerFunctions.create);
+    mapForEach(delta.modified, handlerFunctions.modify);
+    mapForEach(delta.added, handlerFunctions.add);
     if (handlerFunctions.after) {
       handlerFunctions.after();
     }

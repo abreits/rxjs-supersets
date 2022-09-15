@@ -23,8 +23,8 @@ export function groupDelta<
       // optimization for empty source map
       groupSet.clear();
     } else {
-      addEntries(delta.updated);
-      addEntries(delta.created);
+      addEntries(delta.modified);
+      addEntries(delta.added);
       removeEntries(delta.deleted);
     }
     const newDelta = groupSet.getDelta();

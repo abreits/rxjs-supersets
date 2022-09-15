@@ -212,9 +212,9 @@ describe('DeltaMap', () => {
     function subscribeHandlers(map: DeltaMap<string, IdObject>): void {
       subscriptions.push(
         map.delta$.pipe(tapDelta({
-          create: (entry) => subscriptionResults.push(`add:${entry.id}`),
+          add: (entry) => subscriptionResults.push(`add:${entry.id}`),
           delete: (entry) => subscriptionResults.push(`delete:${entry.id}`),
-          update: (entry) => subscriptionResults.push(`modify:${entry.id}`)
+          modify: (entry) => subscriptionResults.push(`modify:${entry.id}`)
         })).subscribe(result => delta$Results.push(result))
       );
     }

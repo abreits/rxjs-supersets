@@ -15,9 +15,9 @@ export function startDelta<
       // first pass, we add all elements to created for correct initial state
       delta = {
         all: delta.all,
-        created: delta.all,
+        added: delta.all,
         deleted: new Map<K, V>(),
-        updated: new Map<K, V>()
+        modified: new Map<K, V>()
       };
       started = true;
     }

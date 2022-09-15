@@ -3,21 +3,18 @@ import { map } from 'rxjs/operators';
 import { DeltaObservable, IdObject, MapDelta } from '../../types';
 
 /**
- * @deprecated use the _startDelta(), tapDelta()_ operator combination instead
- * or use the _startDelta()_ operator and process the elements in the _subscribe()_ with the _processElements()_ function
+ * RxJS convenience operator that combines the _startDelta()_ and _tapDelta()_ operators
  * 
- * rxjs operator that passes _all_ entries in _added_ on the first passthrough
- * 
- * takes optional parameter that contains optional functions to be called for each
- * created, deleted or updated entry.
-  **/
+ * Advised to use the _startDelta(), tapDelta()_ operator combination instead or use the
+ * _startDelta()_ operator and process the elements in the _subscribe()_ with the _processElements()_ function.
+ **/
 export function processDelta<
   V extends Readonly<IdObject<K>>,
   K = string
 >(handlerFunctions?: {
   before?: () => void,
-  create?: (value: Readonly<V>) => void,
-  update?: (value: Readonly<V>) => void,
+  add?: (value: Readonly<V>) => void,
+  modify?: (value: Readonly<V>) => void,
   delete?: (value: Readonly<V>) => void,
   after?: () => void
 }): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
@@ -27,9 +24,9 @@ export function processDelta<
       // first pass, we add all elements to created for correct initial state
       delta = {
         all: delta.all,
-        created: delta.all,
+        added: delta.all,
         deleted: new Map<K, V>(),
-        updated: new Map<K, V>()
+        modified: new Map<K, V>()
       };
       started = true;
     }
@@ -38,8 +35,8 @@ export function processDelta<
         handlerFunctions.before();
       }
       handleEntries(delta.deleted, handlerFunctions.delete);
-      handleEntries(delta.updated, handlerFunctions.update);
-      handleEntries(delta.created, handlerFunctions.create);
+      handleEntries(delta.modified, handlerFunctions.modify);
+      handleEntries(delta.added, handlerFunctions.add);
       if (handlerFunctions.after) {
         handlerFunctions.after();
       }

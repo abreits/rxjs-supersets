@@ -100,9 +100,9 @@ describe('DeltaSet', () => {
       function subscribeHandlers(map: DeltaMap<string, any>): void {
         subscriptions.push(
           map.delta$.pipe(tapDelta({
-            create: (entry: any) => subscriptionResults.push(`create:${entry.id}`),
+            add: (entry: any) => subscriptionResults.push(`add:${entry.id}`),
             delete: (entry: any) => subscriptionResults.push(`delete:${entry.id}`),
-            update: (entry: any) => subscriptionResults.push(`update:${entry.id}`)
+            modify: (entry: any) => subscriptionResults.push(`modify:${entry.id}`)
           })).subscribe(result => delta$Results.push(result))
         );
       }
@@ -132,7 +132,7 @@ describe('DeltaSet', () => {
           expect(test.size).toEqual(5);
           expect(delta$Results.length).toEqual(1); // combined update only
           expect(subscriptionResults.sort()).toEqual([
-            'create:entry4', 'create:entry5', 'update:entry2', 'update:entry3'
+            'add:entry4', 'add:entry5', 'modify:entry2', 'modify:entry3'
           ]);
         });
 
@@ -145,7 +145,7 @@ describe('DeltaSet', () => {
           test.addMultiple(newContent);
 
           expect(subscriptionResults.sort()).toEqual([
-            'create:entry4', 'create:entry5', 'update:entry3'
+            'add:entry4', 'add:entry5', 'modify:entry3'
           ]);
         });
       });
@@ -156,7 +156,7 @@ describe('DeltaSet', () => {
           subscribeHandlers(test);
           test.replace(startContent);
 
-          expect(subscriptionResults.sort()).toEqual(['create:entry1', 'create:entry2', 'create:entry3']);
+          expect(subscriptionResults.sort()).toEqual(['add:entry1', 'add:entry2', 'add:entry3']);
         });
 
         it('should observe updating to new content without isUpdated function', () => {
@@ -170,7 +170,7 @@ describe('DeltaSet', () => {
 
           expect(delta$Results.length).toEqual(1); // combined update only
           expect(subscriptionResults.sort()).toEqual([
-            'create:entry4', 'create:entry5', 'delete:entry1', 'update:entry2', 'update:entry3'
+            'add:entry4', 'add:entry5', 'delete:entry1', 'modify:entry2', 'modify:entry3'
           ]);
         });
 
@@ -183,7 +183,7 @@ describe('DeltaSet', () => {
           test.replace(newContent);
 
           expect(subscriptionResults.sort()).toEqual([
-            'create:entry4', 'create:entry5', 'delete:entry1', 'update:entry3'
+            'add:entry4', 'add:entry5', 'delete:entry1', 'modify:entry3'
           ]);
         });
       });

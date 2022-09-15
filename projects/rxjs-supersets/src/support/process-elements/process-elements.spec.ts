@@ -13,9 +13,9 @@ describe('processElements', () => {
     const test = new DeltaMap<string, IdObject>();
 
     const subscription = test.delta$.subscribe(delta => processElements(delta, {
-      create: element => results.push(`add:${element.id}`),
+      add: element => results.push(`add:${element.id}`),
       delete: element => results.push(`delete:${element.id}`),
-      update: element => results.push(`modify:${element.id}`),
+      modify: element => results.push(`modify:${element.id}`),
     }));
 
     results = [];

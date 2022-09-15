@@ -9,9 +9,9 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   private deltaSubject$ = new ReplaySubject<MapDelta<K, V>>(1);
   public delta$ = this.deltaSubject$.asObservable();
 
-  private created!: Map<K, V>;
+  private added!: Map<K, V>;
   private deleted!: Map<K, V>;
-  private updated!: Map<K, V>;
+  private modified!: Map<K, V>;
   private existedBeforeDelta?: Set<K>;
 
   private publishEmpty = true;
@@ -65,7 +65,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Publish modification to delta$ if there are changes or if it is the first time called.
    */
   protected publishDelta(): void {
-    if (this.publish && (this.created.size > 0 || this.updated.size > 0 || this.deleted.size > 0 || this.publishEmpty)) {
+    if (this.publish && (this.added.size > 0 || this.modified.size > 0 || this.deleted.size > 0 || this.publishEmpty)) {
       this.deltaSubject$.next(this.getDelta());
       this.publishEmpty = false;
       this.clearDelta();
@@ -100,8 +100,8 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   getDelta(): MapDelta<K, V> {
     return {
       all: this.copyAll ? new Map(this) : this,
-      created: this.created,
-      updated: this.updated,
+      added: this.added,
+      modified: this.modified,
       deleted: this.deleted
     };
   }
@@ -113,9 +113,9 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * only use in DeltaMaps without subscriptions.
    */
   clearDelta(): void {
-    this.created = new Map<K, V>();
+    this.added = new Map<K, V>();
     this.deleted = new Map<K, V>();
-    this.updated = new Map<K, V>();
+    this.modified = new Map<K, V>();
     this.existedBeforeDelta = undefined;
   }
 
@@ -137,10 +137,10 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    * Can be extended and/or overridden in subclasses
    */
   protected doSet(id: K, value: V): void {
-    if (this.created.has(id)) {
+    if (this.added.has(id)) {
       // already in created, update add
       super.set(id, value);
-      this.created.set(id, value);
+      this.added.set(id, value);
     } else {
       this.deleted.delete(id);
       const prevEntry = this.get(id);
@@ -149,15 +149,15 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
         if (!this.isUpdated || this.isUpdated(value, prevEntry)) {
           // updated entry
           super.set(id, value);
-          this.updated.set(id, value);
+          this.modified.set(id, value);
         }
       } else {
         // new entry
         super.set(id, value);
         if (this.existedBeforeDelta?.has(id)) {
-          this.updated.set(id, value);
+          this.modified.set(id, value);
         } else {
-          this.created.set(id, value);
+          this.added.set(id, value);
         }
       }
     }
@@ -181,8 +181,8 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
   protected doDelete(id: K): boolean {
     const deletedItem = this.get(id);
     super.delete(id);
-    if (this.created.has(id)) {
-      this.created.delete(id);
+    if (this.added.has(id)) {
+      this.added.delete(id);
       return true;
     } else {
       if (deletedItem) {
@@ -192,7 +192,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
           }
           this.existedBeforeDelta.add(id);
         }
-        this.updated.delete(id);
+        this.modified.delete(id);
         this.deleted.set(id, deletedItem);
         return true;
       }

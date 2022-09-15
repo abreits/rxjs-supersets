@@ -23,8 +23,8 @@ export function createDelta<V extends IdObject<K>, K = string>(from: {
 
   return {
     all: createMap(from.all),
-    created: createMap(from.added),
-    updated: createMap(from.modified),
+    added: createMap(from.added),
+    modified: createMap(from.modified),
     deleted: createMap(from.deleted),
   };
 }

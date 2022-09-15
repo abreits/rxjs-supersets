@@ -8,9 +8,9 @@ import { SimpleSuperSet } from './simple-super-set';
 
 // debugging support function
 // function printSubSet(subset: any) {
-//   console.log('created:', [...subset.created.keys()])
+//   console.log('added:', [...subset.added.keys()])
 //   console.log('deleted:', [...subset.deleted.keys()])
-//   console.log('updated:', [...subset.updated.keys()])
+//   console.log('modified:', [...subset.modified.keys()])
 // }
 
 class ContentClass implements MemberObject {
@@ -32,9 +32,9 @@ describe('SimpleSimpleSuperSet', () => {
   function subscribeHandlers(observable: DeltaObservable<string, MemberObject>, results: string[]): void {
     subscriptions.push(
       observable.pipe(tapDelta({
-        create: (entry: any) => results.push(`add:${entry.id}`),
+        add: (entry: any) => results.push(`add:${entry.id}`),
         delete: (entry: any) => results.push(`delete:${entry.id}`),
-        update: (entry: any) => results.push(`modify:${entry.id}`)
+        modify: (entry: any) => results.push(`modify:${entry.id}`)
       })).subscribe()
     );
   }

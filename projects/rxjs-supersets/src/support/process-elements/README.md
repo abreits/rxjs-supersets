@@ -17,7 +17,7 @@ handlerFunctions: {
 Function of the handler structure members:
 
 - `delete`: the function is called for every element in the `mapDelta.deleted` set.
-- `modify`: the function is called for every element in the `mapDelta.updated` set.
+- `modify`: the function is called for every element in the `mapDelta.modified` set.
 - `before`: the function is called only once, before all `add`, `delete` and `modify` calls.
 
 The order in which the methods are handled is:

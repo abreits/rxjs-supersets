@@ -7,11 +7,11 @@ import { IdObject, MapDelta } from '../../types';
 export function processElements<V extends IdObject<K>, K = string>(
   delta: MapDelta<K, V>,
   handlerFunctions: {
-    create?: (value: Readonly<V>) => void,
-    update?: (value: Readonly<V>) => void,
+    add?: (value: Readonly<V>) => void,
+    modify?: (value: Readonly<V>) => void,
     delete?: (value: Readonly<V>) => void,
   }): void {
   mapForEach(delta.deleted, handlerFunctions.delete);
-  mapForEach(delta.updated, handlerFunctions.update);
-  mapForEach(delta.created, handlerFunctions.create);
+  mapForEach(delta.modified, handlerFunctions.modify);
+  mapForEach(delta.added, handlerFunctions.add);
 }

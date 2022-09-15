@@ -38,9 +38,9 @@ describe('filterDelta', () => {
     test.set(element2.id, element2);
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element2')).toBeDefined();
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element2')).toBeDefined();
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(1);
 
@@ -55,9 +55,9 @@ describe('filterDelta', () => {
     test.set(element4.id, element4);
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element4')).toBeDefined();
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element4')).toBeDefined();
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(2);
 
@@ -66,8 +66,8 @@ describe('filterDelta', () => {
     test.set(element2b.id, element2b);
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(0);
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(0);
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(1);
     expect(results.deleted.get('element2')).toEqual({ id: 'element2', value: 2 });
     expect(results.all.size).toBe(1);
@@ -78,9 +78,9 @@ describe('filterDelta', () => {
     test.set(element2.id, element2); // updating
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(0);
-    expect(results.updated.size).toBe(1);
-    expect(results.updated.get('element2')).toBeDefined();
+    expect(results.added.size).toBe(0);
+    expect(results.modified.size).toBe(1);
+    expect(results.modified.get('element2')).toBeDefined();
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(2);
 
@@ -89,8 +89,8 @@ describe('filterDelta', () => {
     test.delete(element4.id);
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(0);
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(0);
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(1);
     expect(results.deleted.get('element4')).toBeDefined();
     expect(results.all.size).toBe(1);
@@ -99,9 +99,9 @@ describe('filterDelta', () => {
     test.set(element4.id, element4);
 
     expect(updated).toBe(true);
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element4')).toBeDefined();
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element4')).toBeDefined();
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(2);
 

@@ -21,13 +21,13 @@ export function filterDelta<
             // optimization for empty source map
             filterSet.clear();
           } else {
-            filterEntries(delta.updated);
-            filterEntries(delta.created);
+            filterEntries(delta.modified);
+            filterEntries(delta.added);
             deleteEntries(delta.deleted);
           }
           const newDelta = filterSet.getDelta();
           filterSet.clearDelta();
-          if (newDelta.created.size > 0 || newDelta.updated.size > 0 || newDelta.deleted.size > 0) {
+          if (newDelta.added.size > 0 || newDelta.modified.size > 0 || newDelta.deleted.size > 0) {
             subscriber.next(newDelta);
           }
         },

@@ -33,9 +33,9 @@ The content changes are published in `MapDelta` format:
 ``` typescript
 export interface MapDelta<K, V> {
   all: ReadonlyMap<K, Readonly<V>>;
-  created: ReadonlyMap<K, Readonly<V>>;
+  added: ReadonlyMap<K, Readonly<V>>;
   deleted: ReadonlyMap<K, Readonly<V>>;
-  updated: ReadonlyMap<K, Readonly<V>>;
+  modified: ReadonlyMap<K, Readonly<V>>;
 }
 ```
 
@@ -90,8 +90,8 @@ deltaMap.set('item2', new Date());
 // deltaMap.delta$ is a Replaysubject(1), it only returns the last update
 deltaMap.delta$.subscribe(delta => {
   delta.all; // contains a map with both created entries
-  delta.created; // contains a map with only the latest addition (item2)
-  delta.updated; // contains a map with no entries (nothing updated)
+  delta.added; // contains a map with only the latest addition (item2)
+  delta.modified; // contains a map with no entries (nothing updated)
   delta.deleted; // contains a map with no entries (nothing deleted)
 });
 
@@ -101,8 +101,8 @@ deltaMap.set('item1', new Date());
 // latest deltaMap.delta$ update now contains
 deltaMap.delta$.subscribe(delta => {
   delta.all;     // a map with both entries
-  delta.created; // a map with no entries (nothing created)
-  delta.updated; // a map with item1
+  delta.added; // a map with no entries (nothing created)
+  delta.modified; // a map with item1
   delta.deleted; // a map with no entries (nothing deleted)
 });
 
@@ -112,8 +112,8 @@ deltaMap.delete('item2');
 // latest deltaMap.delta$ update now contains
 deltaMap.delta$.subscribe(delta => {
   delta.all;     // a map with remaining entry (item1)
-  delta.created; // a map with no entries (nothing created)
-  delta.updated; // a map with no entries (nothing updated)
+  delta.added; // a map with no entries (nothing created)
+  delta.modified; // a map with no entries (nothing updated)
   delta.deleted; // a map with item2
 });
 ```
@@ -131,8 +131,8 @@ deltaMap.set('item2', new Date());
 // you can insert the startDelta() operator
 deltaMap.delta$.pipe(startDelta()).subscribe(delta => {
   delta.all;     // contains a map with both created entries
-  delta.created; // contains a map with all entries on the first update
-  delta.updated; // contains a map with no entries on the first update
+  delta.added; // contains a map with all entries on the first update
+  delta.modified; // contains a map with no entries on the first update
   delta.deleted; // contains a map with no entries on the first update
 });
 
@@ -142,8 +142,8 @@ deltaMap.delta$.pipe(
   startDelta(),
   tapDelta({
     before: () => initUpdate(),     // call before update processing (optional)
-    create: entry => doAdd(entry),    // processes both entries one at a time (optional)
-    update: entry => doModify(entry), // ignored because there are no entries to process (optional)
+    add: entry => doAdd(entry),    // processes both entries one at a time (optional)
+    modify: entry => doModify(entry), // ignored because there are no entries to process (optional)
     delete: entry => doDelete(entry), // ignored because there are no entries to process (optional)
     after: () => completeUpdate()   // call after update processing (optional)
   })
@@ -156,8 +156,8 @@ deltaMap.delta$.pipe(
   filterDelta(element => element < Date.now())
 ).subscribe(delta => {
   delta.all;     // contains a map with both created entries
-  delta.created; // contains a map with all entries on the first update
-  delta.updated; // contains a map with no entries on the first update
+  delta.added; // contains a map with all entries on the first update
+  delta.modified; // contains a map with no entries on the first update
   delta.deleted; // contains a map with no entries on the first update
 });
 
@@ -187,8 +187,8 @@ deltaSet.addMultiple([item1, item2, item3]);
 // deltaSet.delta$ is a Replaysubject(1), it only returns the last update
 deltaSet.delta$.subscribe(delta => {
   delta.all;     // a map with all created entries
-  delta.created; // a map with only the latest addition (item3)
-  delta.updated; // a map with no entries (nothing updated)
+  delta.added; // a map with only the latest addition (item3)
+  delta.modified; // a map with no entries (nothing updated)
   delta.deleted; // a map with no entries (nothing deleted)
 });
 
@@ -199,8 +199,8 @@ deltaSet.add(item2b); // item2 is replaced with item2b
 // a subscription would receve the following
 deltaSet.delta$.subscribe(delta => {
   delta.all;     // a map with all current entries
-  delta.created; // a map with no entries (nothing updated)
-  delta.updated; // a map with item2b
+  delta.added; // a map with no entries (nothing updated)
+  delta.modified; // a map with item2b
   delta.deleted; // a map with no entries (nothing deleted)
 });
 
@@ -214,8 +214,8 @@ deltaSet.delta$.pipe(
   }))
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
-  delta.created; // a map with new mapped entries
-  delta.updated; // a map with updated mapped entries
+  delta.added; // a map with new mapped entries
+  delta.modified; // a map with updated mapped entries
   delta.deleted; // a map with deleted mapped entries
 });
 
@@ -256,8 +256,8 @@ const deltaSet = new DeltaSet<string, IdContent>({
 // if 'publishEmpty' is set to true, initially empty sets also publish updates
 deltaSet.delta$.subscribe(delta => {
   delta.all;      // a map with no entries (nothing present)
-  delta.created;    // a map with no entries (nothing created)
-  delta.updated; // a map with no entries (nothing updated)
+  delta.added;    // a map with no entries (nothing created)
+  delta.modified; // a map with no entries (nothing updated)
   delta.deleted;  // a map with no entries (nothing deleted)
 });
 

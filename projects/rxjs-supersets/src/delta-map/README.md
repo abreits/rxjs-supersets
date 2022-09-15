@@ -32,15 +32,15 @@ const modifyCheckMap = new DeltaMap<string, TimedObject>({
 const subscription = deltaMap.delta$.subscribe(delta => {
   // do something with the MapDelta delta
   if(delta.all.size > 0) ...
-  if(delta.created.size > 0) ...
+  if(delta.added.size > 0) ...
   if(delta.deleted.size > 0) ...
-  if(delta.updated.size > 0) ...
+  if(delta.modified.size > 0) ...
 });
 
 // subscribe to DeltaMap updates with the processDelta operator
 const subscription = deltaMap.delta$.pipe(processDelta({
-  create: entry => processCreateElement(entry),
-  update: entry => processUpdateElement(entry),
+  add: entry => processCreateElement(entry),
+  modify: entry => processUpdateElement(entry),
   delete: entry => processDeleteElement(entry)
 })).subscribe();
 ```
@@ -100,8 +100,8 @@ The `DeltaMap` class adds or changes the following properties and methods of the
 ``` typescript
 export interface MapDelta<Key, Value> {
   all: MapReader<Key, Value>;
-  created: MapReader<Key, Value>;
-  updated: MapReader<Key, Value>;
+  added: MapReader<Key, Value>;
+  modified: MapReader<Key, Value>;
   deleted: SetReader<Key>;
 }
 ```
@@ -110,22 +110,22 @@ Examples
 map1.delta$.subscribe(delta => {
   console.log('received map delta update')
   console.log(`  all entries: ${delta.all}`);
-  console.log(`  entries created: ${delta.created}`);
-  console.log(`  entries updated: ${delta.updated}`);
+  console.log(`  entries added: ${delta.added}`);
+  console.log(`  entries modified: ${delta.modified}`);
   console.log(`  entries deleted: ${delta.deleted}`);
 });
 
 map1.delta$.pipe(processDelta()).subscribe(delta => {
   console.log('received map delta update')
   console.log(`  all entries: ${delta.all}`);
-  console.log(`  entries created: ${delta.created}`); // equal to 'all' in first delta
-  console.log(`  entries updated: ${delta.updated}`); // empty in first delta
+  console.log(`  entries added: ${delta.added}`); // equal to 'all' in first delta
+  console.log(`  entries modified: ${delta.modified}`); // empty in first delta
   console.log(`  entries deleted: ${delta.deleted}`); // empty in first delta
 });
 
 map1.delta$.pipe(processDelta({
-  create: entry => console.log(`created ${entry}`),
-  update: entry => console.log(`updated ${entry}`),
+  add: entry => console.log(`created ${entry}`),
+  modify: entry => console.log(`updated ${entry}`),
   delete: entry => console.log(`deleted ${entry}`),
 })).subscribe();
 ```

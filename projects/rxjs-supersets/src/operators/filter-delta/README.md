@@ -15,8 +15,8 @@ deltaMap.delta$.pipe(startDelta(
   filterDelta(element => element < Date.now())
 )).subscribe(delta => {
   delta.all;     // contains a map with both created entries
-  delta.created; // contains a map with all entries on the first update
-  delta.updated; // contains a map with no entries on the first update
+  delta.added; // contains a map with all entries on the first update
+  delta.modified; // contains a map with no entries on the first update
   delta.deleted; // contains a map with no entries on the first update
 });
 ```

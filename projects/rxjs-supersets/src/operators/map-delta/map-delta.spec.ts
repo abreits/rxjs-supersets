@@ -21,53 +21,53 @@ describe('mapDelta', () => {
     // test adding element
     test.set(element1.id, element1);
 
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element1m')).toEqual({ id: 'element1m', value: 2 });
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element1m')).toEqual({ id: 'element1m', value: 2 });
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(1);
 
     // test adding element
     test.set(element2.id, element2);
 
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element2m')).toEqual({ id: 'element2m', value: 3 });
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element2m')).toEqual({ id: 'element2m', value: 3 });
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(2);
 
     // test adding element
     test.set(element3.id, element3);
 
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element3m')).toEqual({ id: 'element3m', value: 4 });
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element3m')).toEqual({ id: 'element3m', value: 4 });
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(3);
 
     // test updating element
     test.set(element2b.id, element2b);
 
-    expect(results.created.size).toBe(0);
-    expect(results.updated.size).toBe(1);
-    expect(results.updated.get('element2m')).toEqual({ id: 'element2m', value: 5 });
+    expect(results.added.size).toBe(0);
+    expect(results.modified.size).toBe(1);
+    expect(results.modified.get('element2m')).toEqual({ id: 'element2m', value: 5 });
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(3);
 
     // test deleting element and adding it again
     test.delete(element1.id);
 
-    expect(results.created.size).toBe(0);
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(0);
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(1);
     expect(results.deleted.get('element1m')).toEqual({ id: 'element1m', value: 2 });
     expect(results.all.size).toBe(2);
 
     test.set(element1.id, element1);
 
-    expect(results.created.size).toBe(1);
-    expect(results.created.get('element1m')).toEqual({ id: 'element1m', value: 2 });
-    expect(results.updated.size).toBe(0);
+    expect(results.added.size).toBe(1);
+    expect(results.added.get('element1m')).toEqual({ id: 'element1m', value: 2 });
+    expect(results.modified.size).toBe(0);
     expect(results.deleted.size).toBe(0);
     expect(results.all.size).toBe(3);
 
