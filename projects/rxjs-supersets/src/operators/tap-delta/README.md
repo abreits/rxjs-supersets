@@ -29,8 +29,8 @@ The order in which the methods are handled is:
 
 - `before` once
 - `delete` once for every `deleted` entry
-- `modify` once fore every `created` entry
-- `add` once for every `created` entry
+- `modify` once fore every `added` entry
+- `add` once for every `added` entry
 - `after` once
 
 ## Examples

@@ -3,7 +3,7 @@
 **DEPRECATED** use a combination of [startDelta()](../start-delta/README.md) and [tapDelta(...)](../tap-delta/README.md) or [processElements(...)](../../support/process-elements/README.md) instead.
 
 The `processDelta` RxJS operator processes `MapDelta` updates.
-It makes sure that the first result always contains all map entries in the `created` field.
+It makes sure that the first result always contains all map entries in the `added` field.
 
 [back to main](../../README.md)
 
@@ -31,8 +31,8 @@ The order in which the methods are handled is:
 
 - `before` once
 - `delete` once for every `deleted` entry
-- `modify` once fore every `created` entry
-- `add` once for every `created` entry
+- `modify` once fore every `added` entry
+- `add` once for every `added` entry
 - `after` once
 
 ## Examples

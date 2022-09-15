@@ -138,7 +138,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
    */
   protected doSet(id: K, value: V): void {
     if (this.added.has(id)) {
-      // already in created, update add
+      // already in added, update add
       super.set(id, value);
       this.added.set(id, value);
     } else {
@@ -147,7 +147,7 @@ export class DeltaMap<K, V> extends Map<K, V> implements ReadonlyMap<K, V> {
       if (prevEntry) {
         // existing entry
         if (!this.isUpdated || this.isUpdated(value, prevEntry)) {
-          // updated entry
+          // modified entry
           super.set(id, value);
           this.modified.set(id, value);
         }

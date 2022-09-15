@@ -317,7 +317,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([]);
       });
 
-      it('should send only one delta$.add update if a new set element is updated before resumeDelta', () => {
+      it('should send only one delta$.add update if a new set element is modified before resumeDelta', () => {
         const test = new DeltaMap<string, any>();
         subscribeHandlers(test);
 
@@ -331,7 +331,7 @@ describe('DeltaMap', () => {
         expect(subscriptionResults).toEqual([`add:${entry2a.id}`]);
       });
 
-      it('should not send a delta$.modify update if an existing element is updated and deleted before resumeDelta', () => {
+      it('should not send a delta$.modify update if an existing element is modified and deleted before resumeDelta', () => {
         const test = new DeltaMap<string, any>();
         subscribeHandlers(test);
 
@@ -571,7 +571,7 @@ describe('DeltaMap', () => {
     });
 
     describe('publishEmpty', () => {
-      it('should publish changes the first time it is updated, even if the set is empty', () => {
+      it('should publish changes the first time it is modified, even if the set is empty', () => {
         const results: MapDelta<string, IdObject>[] = [];
         const test = new DeltaMap<string, IdObject>();
         const subscription = test.delta$.subscribe(result => results.push(result));
@@ -588,7 +588,7 @@ describe('DeltaMap', () => {
         subscription.unsubscribe();
       });
 
-      it('should publish changes the first time it is updated, even if the set is empty, if publishEmpty setting is true', () => {
+      it('should publish changes the first time it is modified, even if the set is empty, if publishEmpty setting is true', () => {
         const results: MapDelta<string, IdObject>[] = [];
         const test = new DeltaMap<string, IdObject>({ publishEmpty: true });
         const subscription = test.delta$.subscribe(result => results.push(result));

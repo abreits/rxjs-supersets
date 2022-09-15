@@ -1,7 +1,7 @@
 # `mapDelta(mappingFunction: (entry) => modifiedEntry)`
 
 The `mapDelta` RxJS operator operates on `MapDelta` structures.
-It performs the specified map operation to all `created` and `updated` items in the `MapDelta`.
+It performs the specified map operation to all `added` and `modified` items in the `MapDelta`.
 
 [back to main](../../../README.md)
 
@@ -32,7 +32,7 @@ deltaSet.delta$.pipe(
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
   delta.added; // a map with new mapped entries
-  delta.modified; // a map with updated mapped entries
+  delta.modified; // a map with modified mapped entries
   delta.deleted; // a map with deleted mapped entries
 });
 

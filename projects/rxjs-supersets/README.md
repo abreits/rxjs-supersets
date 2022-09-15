@@ -1,6 +1,6 @@
 # rxjs-supersets <!-- omit in toc -->
 
-A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that publish changes in their state (entries created, updated or deleted) using [RxJS](https://rxjs.dev/) Observables.
+A collection of [Typescript](https://www.typescriptlang.org/) Maps and Sets that publish changes in their state (entries added, modified or deleted) using [RxJS](https://rxjs.dev/) Observables.
 
 For the latest changes and the current version see the [Change log](./CHANGELOG.md).
 
@@ -57,12 +57,12 @@ A `processDelta` rxjs operator is provided to help processing the resulting `Map
 
 ## RxJS operators
 
-- [filterDelta](./src/operators/filter-delta/README.md) filters all created and updated elements of a _MapDelta_.
+- [filterDelta](./src/operators/filter-delta/README.md) filters all added and modified elements of a _MapDelta_.
 - [groupDelta](./src/operators/group-delta/README.md) moves _MapDelta_ `IdObject` entries into groups and forwards the result as a _MapDelta_.
-- [mapDelta](./src/operators/map-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_, this can result in another class of `IdObject` for the processed elements.
-- [produceDelta](./src/operators/produce-delta/README.md) creates a mapping over all created and updated elements of a _MapDelta_ using the [immer](https://immerjs.github.io/immer/) `produce` function, this always results in the same class of `IdObject` for the processed elements.
-- [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the created property on the first _delta$_ subscription update.
-- [tapDelta](./src/operators/tap-delta/README.md) can create side effects for all created, updated and deleted elements of a _MapDelta_.
+- [mapDelta](./src/operators/map-delta/README.md) creates a mapping over all added and modified elements of a _MapDelta_, this can result in another class of `IdObject` for the processed elements.
+- [produceDelta](./src/operators/produce-delta/README.md) creates a mapping over all added and modified elements of a _MapDelta_ using the [immer](https://immerjs.github.io/immer/) `produce` function, this always results in the same class of `IdObject` for the processed elements.
+- [startDelta](./src/operators/start-delta/README.md) makes sure that a new subscription to an existing _DeltaMap_ or _DeltaSet_ always gets the full list of elements in the added property on the first _delta$_ subscription update.
+- [tapDelta](./src/operators/tap-delta/README.md) can create side effects for all added, modified and deleted elements of a _MapDelta_.
 - **Deprecated**: [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
 
 
@@ -89,9 +89,9 @@ deltaMap.set('item2', new Date());
 
 // deltaMap.delta$ is a Replaysubject(1), it only returns the last update
 deltaMap.delta$.subscribe(delta => {
-  delta.all; // contains a map with both created entries
+  delta.all; // contains a map with both added entries
   delta.added; // contains a map with only the latest addition (item2)
-  delta.modified; // contains a map with no entries (nothing updated)
+  delta.modified; // contains a map with no entries (nothing modified)
   delta.deleted; // contains a map with no entries (nothing deleted)
 });
 
@@ -101,7 +101,7 @@ deltaMap.set('item1', new Date());
 // latest deltaMap.delta$ update now contains
 deltaMap.delta$.subscribe(delta => {
   delta.all;     // a map with both entries
-  delta.added; // a map with no entries (nothing created)
+  delta.added; // a map with no entries (nothing added)
   delta.modified; // a map with item1
   delta.deleted; // a map with no entries (nothing deleted)
 });
@@ -112,8 +112,8 @@ deltaMap.delete('item2');
 // latest deltaMap.delta$ update now contains
 deltaMap.delta$.subscribe(delta => {
   delta.all;     // a map with remaining entry (item1)
-  delta.added; // a map with no entries (nothing created)
-  delta.modified; // a map with no entries (nothing updated)
+  delta.added; // a map with no entries (nothing added)
+  delta.modified; // a map with no entries (nothing modified)
   delta.deleted; // a map with item2
 });
 ```
@@ -127,10 +127,10 @@ const deltaMap = new DeltaMap<string, Date>();
 deltaMap.set('item1', new Date());
 deltaMap.set('item2', new Date());
 
-// if you want a new subscription to always start with all in the created property
+// if you want a new subscription to always start with all in the added property
 // you can insert the startDelta() operator
 deltaMap.delta$.pipe(startDelta()).subscribe(delta => {
-  delta.all;     // contains a map with both created entries
+  delta.all;     // contains a map with both added entries
   delta.added; // contains a map with all entries on the first update
   delta.modified; // contains a map with no entries on the first update
   delta.deleted; // contains a map with no entries on the first update
@@ -155,7 +155,7 @@ deltaMap.delta$.pipe(
   startDelta(),
   filterDelta(element => element < Date.now())
 ).subscribe(delta => {
-  delta.all;     // contains a map with both created entries
+  delta.all;     // contains a map with both added entries
   delta.added; // contains a map with all entries on the first update
   delta.modified; // contains a map with no entries on the first update
   delta.deleted; // contains a map with no entries on the first update
@@ -186,9 +186,9 @@ deltaSet.addMultiple([item1, item2, item3]);
 
 // deltaSet.delta$ is a Replaysubject(1), it only returns the last update
 deltaSet.delta$.subscribe(delta => {
-  delta.all;     // a map with all created entries
+  delta.all;     // a map with all added entries
   delta.added; // a map with only the latest addition (item3)
-  delta.modified; // a map with no entries (nothing updated)
+  delta.modified; // a map with no entries (nothing modified)
   delta.deleted; // a map with no entries (nothing deleted)
 });
 
@@ -199,7 +199,7 @@ deltaSet.add(item2b); // item2 is replaced with item2b
 // a subscription would receve the following
 deltaSet.delta$.subscribe(delta => {
   delta.all;     // a map with all current entries
-  delta.added; // a map with no entries (nothing updated)
+  delta.added; // a map with no entries (nothing modified)
   delta.modified; // a map with item2b
   delta.deleted; // a map with no entries (nothing deleted)
 });
@@ -215,7 +215,7 @@ deltaSet.delta$.pipe(
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
   delta.added; // a map with new mapped entries
-  delta.modified; // a map with updated mapped entries
+  delta.modified; // a map with modified mapped entries
   delta.deleted; // a map with deleted mapped entries
 });
 
@@ -233,7 +233,7 @@ deltaSet.delta$.pipe(
 
 ## settings example
 
-All `rxjs-supersets` Maps and Sets can have settings created to modify their behaviour.
+All `rxjs-supersets` Maps and Sets can have settings added to modify their behaviour.
 
 ``` typescript
 // an IdObject class to demonstrate te DeltaSet
@@ -256,13 +256,13 @@ const deltaSet = new DeltaSet<string, IdContent>({
 // if 'publishEmpty' is set to true, initially empty sets also publish updates
 deltaSet.delta$.subscribe(delta => {
   delta.all;      // a map with no entries (nothing present)
-  delta.added;    // a map with no entries (nothing created)
-  delta.modified; // a map with no entries (nothing updated)
+  delta.added;    // a map with no entries (nothing added)
+  delta.modified; // a map with no entries (nothing modified)
   delta.deleted;  // a map with no entries (nothing deleted)
 });
 
 deltaSet.addMultiple([item1, item2, item3]);
-// entries created and updates sent to delta$ subscriptions
+// entries added and updates sent to delta$ subscriptions
 
 const item2b = new IdDate('id2','content2');
 deltaSet.add(item2b);
@@ -306,9 +306,9 @@ const subset2Subscription = superSet.subsets.get('subset2').delta$.subscribe();
 
 superSet.addMultiple([item1, item2, item3, item4, item5, item6]);
 // 'subset2Subscription' receives a delta that tells that MemberContent entries with 
-// id4 and id5 have been created.
+// id4 and id5 have been added.
 // 'superSetSubscription' receives a delta that tells that MemberContent entries with
-// id1, id2, id3, id4, id5 and id6 have been created.
+// id1, id2, id3, id4, id5 and id6 have been added.
 
 // Subscribing to an exisiting subset returns its members directly after the subscription.
 const subset1Subscription = superSet.subsets.get('subset1').delta$.subscribe();

@@ -12,7 +12,7 @@ export function startDelta<
   let started = false;
   return map((delta: MapDelta<K, V>) => {
     if (!started) {
-      // first pass, we add all elements to created for correct initial state
+      // first pass, we add all elements to added for correct initial state
       delta = {
         all: delta.all,
         added: delta.all,

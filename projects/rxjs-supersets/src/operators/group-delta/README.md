@@ -7,7 +7,7 @@ this function returns _true_ if the entry must be grouped.
 
 The group the entry is placed into is determined by the supplied `createGroupId()` function.
 
-If a group contains no items it is deleted. If an item moves to another group, it results in 2 changes (removal from the first group and addition to the second group), these changes can create, update and/or delete groups in the resulting `MapDelta`. 
+If a group contains no items it is deleted. If an item moves to another group, it results in 2 changes (removal from the first group and addition to the second group), these changes can add, modify and/or delete groups in the resulting `MapDelta`. 
 
 [back to main](../../../README.md)
 

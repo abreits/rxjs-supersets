@@ -23,8 +23,8 @@ Function of the handler structure members:
 The order in which the methods are handled is:
 
 - `delete` once for every `deleted` element
-- `modify` once fore every `created` element
-- `add` once for every `created` element
+- `modify` once fore every `added` element
+- `add` once for every `added` element
 
 ``` typescript
 observable.pipe(startDelta()).subscribe(delta => {

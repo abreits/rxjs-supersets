@@ -10,7 +10,7 @@
   "optionalDependencies": {
     "immer": ">9.0.0"
   },
-  "description": "A collection of Typescript Maps and Sets that publish changes in their state (entries created, updated or deleted) using RxJS Observables.",
+  "description": "A collection of Typescript Maps and Sets that publish changes in their state (entries added, modified or deleted) using RxJS Observables.",
   "keywords": [
     "rxjs",
     "typescript",

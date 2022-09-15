@@ -8,7 +8,7 @@ import { DeltaObservable, IdObject, MapDelta } from '../../types';
  * Rxjs operator that performs side effects on the DeltaMap without changing its contents.
  * 
  * Takes a handleFunctions parameter that contains optional functions to be called for each
- * created, deleted or updated entry.
+ * added, deleted or modified entry.
  */
 export function tapDelta<
   V extends Readonly<IdObject<K>>,

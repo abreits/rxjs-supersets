@@ -19,7 +19,7 @@ The `DeltaMap` extends the javascript core `Map` class. It provides a `delta$` p
 // create a new DeltaMap 
 const deltaMap = new DeltaMap<string, string>();
 
-// create a new DeltaMap with a updated check
+// create a new DeltaMap with a modified check
 interface TimedObject {
   lastUpdated: Date;
   // other properties
@@ -55,8 +55,8 @@ The `DeltaMap` class adds or changes the following properties and methods of the
 
   The constructor for the `DeltaMap` class (called in `new DeltaMap<Key, Value>()`) can be used the same way as the `Map` constructor. It also accepts a settings argument instead or after the `preFilled` content argument. The `DeltaMapSettings` structure can contain the following properties:
 
-  - `isUpdated?: (T) => boolean` By default when an entry is `set` in the `DeltaMap` with an `Id` key that is already present, it is assumed that it is newer and the existing key will be updated to the `set` entry. 
-  An `isUpdated` function can be created to only update the value when certain conditions have been met (e.g. the `date` property of the `set` entry must be more recent than the exisiting entry)
+  - `isUpdated?: (T) => boolean` By default when an entry is `set` in the `DeltaMap` with an `Id` key that is already present, it is assumed that it is newer and the existing key will be modified to the `set` entry. 
+  An `isUpdated` function can be added to only update the value when certain conditions have been met (e.g. the `date` property of the `set` entry must be more recent than the exisiting entry)
 
   - `publishEmpty?: boolean` Defaults to `true`, by default a `DeltaMap` always publishes initially, even when the `DeltaMap` is empty. 
   There are certain cases when you do not want to bother your subscriptions if the `DeltaMap` is initially empty.
@@ -94,7 +94,7 @@ The `DeltaMap` class adds or changes the following properties and methods of the
 ### `delta$: DeltaObservable<Key, Value>`
 <ul><li style="list-style-type: none;">
 
-  Publishes changes to the set created by the `get()`, `set()`, `delete()` and `clear()` methods.
+  Publishes changes to the set added by the `get()`, `set()`, `delete()` and `clear()` methods.
   The changes are published in `MapDelta` format:
 
 ``` typescript
@@ -124,8 +124,8 @@ map1.delta$.pipe(processDelta()).subscribe(delta => {
 });
 
 map1.delta$.pipe(processDelta({
-  add: entry => console.log(`created ${entry}`),
-  modify: entry => console.log(`updated ${entry}`),
+  add: entry => console.log(`added ${entry}`),
+  modify: entry => console.log(`modified ${entry}`),
   delete: entry => console.log(`deleted ${entry}`),
 })).subscribe();
 ```
@@ -159,6 +159,6 @@ This can be used to reduce the number of published.
 <ul><li style="list-style-type: none;">
 
 Resumes a the category updates again after a `pauseDelta()`.
-If there are changes since the `pauseDelta()` it sends the `delta$` subscribers only one update containing all changes (created, deleted and/or updated entries).
+If there are changes since the `pauseDelta()` it sends the `delta$` subscribers only one update containing all changes (added, deleted and/or modified entries).
 [back to top](#deltamap----omit-in-toc)
 </li></ul>

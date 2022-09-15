@@ -19,9 +19,9 @@ const startContent: ContentId[] = [
 const newContent: ContentId[] = [
   // entry1 deleted
   { id: 'entry2', content: 'b1' }, // stays the same
-  { id: 'entry3', content: 'c2' }, // updated
-  { id: 'entry4', content: 'd1' }, // created
-  { id: 'entry5', content: 'e1' }  // created
+  { id: 'entry3', content: 'c2' }, // modified
+  { id: 'entry4', content: 'd1' }, // added
+  { id: 'entry5', content: 'e1' }  // added
 ];
 
 describe('DeltaSet', () => {

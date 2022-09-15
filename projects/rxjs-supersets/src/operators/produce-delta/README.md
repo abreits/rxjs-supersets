@@ -5,7 +5,7 @@ The `produceDelta` RxJS operator is a shorthand for `mapDelta(x => produce(x, y 
 
 It uses the [Immer](https://immerjs.github.io/immer/) library to guarantee that the original element remains immutable.
 
-As with [mapDelta()](../map-delta/README.md), it performs the specified map operation to all `created` and `updated` items in the `MapDelta`.
+As with [mapDelta()](../map-delta/README.md), it performs the specified map operation to all `added` and `modified` items in the `MapDelta`.
 
 [back to main](../../../README.md)
 
@@ -34,7 +34,7 @@ deltaSet.delta$.pipe(
 ).subscribe(delta => {
   delta.all;     // a map with all mapped entries
   delta.added; // a map with new mapped entries
-  delta.modified; // a map with updated mapped entries
+  delta.modified; // a map with modified mapped entries
   delta.deleted; // a map with deleted mapped entries
 });
 
