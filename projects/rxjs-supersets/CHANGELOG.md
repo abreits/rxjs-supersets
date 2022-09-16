@@ -1,5 +1,7 @@
 # Change Log
 
+## 2.02
+  - fixed rxjs map operator import bug
 ## 2.0.1
 - Fix:
   - renamed `isUpdated` property to `isModified` in `DeltaMapSettings`

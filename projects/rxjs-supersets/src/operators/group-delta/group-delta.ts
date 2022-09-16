@@ -1,4 +1,4 @@
-import { map } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { DeltaSet } from '../../delta-set/delta-set';
 
