@@ -1,5 +1,8 @@
 # Change Log
 
+## 2.03
+  - improved groupDelta filtering and type definitions
+
 ## 2.02
   - fixed rxjs map operator import bug
 ## 2.0.1

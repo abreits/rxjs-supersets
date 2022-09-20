@@ -1,8 +1,8 @@
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { DeltaSet } from '../../delta-set/delta-set';
 
-import { MapDelta, IdObject, GroupObject, DeltaObservable, GroupObjectType } from '../../types';
+import { IdObject, GroupObject, DeltaObservable, GroupObjectType } from '../../types';
 
 
 /**
@@ -22,19 +22,48 @@ export function groupDelta<
   const groupSet = new DeltaSet<VG, KG>();
   groupSet.pauseDelta();
 
-  return map((delta: MapDelta<KE, VE>) => {
-    if (delta.all.size === 0) {
-      // optimization for empty source map
-      groupSet.clear();
-    } else {
-      addEntries(delta.modified);
-      addEntries(delta.added);
-      removeEntries(delta.deleted);
-    }
-    const newDelta = groupSet.getDelta();
-    groupSet.clearDelta();
-    return newDelta;
-  });
+  return function (source: DeltaObservable<KE, VE>): DeltaObservable<KG, VG> {
+    return new Observable(subscriber => {
+      const subscription = source.subscribe({
+        next(delta) {
+          if (delta.all.size === 0) {
+            // optimization for empty source map
+            groupSet.clear();
+          } else {
+            addEntries(delta.modified);
+            addEntries(delta.added);
+            removeEntries(delta.deleted);
+          }
+          const newDelta = groupSet.getDelta();
+          groupSet.clearDelta();
+          if (newDelta.added.size > 0 || newDelta.modified.size > 0 || newDelta.deleted.size > 0) {
+            subscriber.next(newDelta);
+          }
+        },
+        error(error) {
+          subscriber.error(error);
+        },
+        complete() {
+          subscriber.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  };
+
+  // return map((delta: MapDelta<KE, VE>) => {
+  //   if (delta.all.size === 0) {
+  //     // optimization for empty source map
+  //     groupSet.clear();
+  //   } else {
+  //     addEntries(delta.modified);
+  //     addEntries(delta.added);
+  //     removeEntries(delta.deleted);
+  //   }
+  //   const newDelta = groupSet.getDelta();
+  //   groupSet.clearDelta();
+  //   return newDelta;
+  // });
 
   function addEntries(set: ReadonlyMap<KE, VE>) {
     for (const entry of set.values()) {
@@ -52,22 +81,20 @@ export function groupDelta<
           }
         }
 
-        const group = getGroup(groupId, entry);
+        const group = getGroup(groupId);
+        group.add(entry);
         groupEntryMap.set(entry.id, group);
         groupSet.add(group);
       }
     }
   }
 
-  function getGroup(groupId: KG, entry: VE): VG {
+  function getGroup(groupId: KG): VG {
     const group = groupSet.get(groupId);
     if (group) {
-      group.add(entry);
       return group;
     } else {
-      const newGroup = new GroupClass(groupId);
-      newGroup.add(entry);
-      return newGroup;
+      return new GroupClass(groupId);
     }
   }
 

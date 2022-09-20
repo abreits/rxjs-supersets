@@ -23,12 +23,12 @@ export interface GroupDeltaSettings<
   VG extends GroupObject<VE, KG, KE>, // Value Group
   KE = string,                        // Key Entry
   KG = string                         // Key Group
-> { 
+> {
   groupFilter?: (element: VE) => boolean;
   groupIdFunction: (element: VE) => KG;
   GroupObjectType: GroupObjectType<VE, VG, KE, KG>;
-} 
- 
+}
+
 
 export declare interface GroupObjectType<
   VE extends Readonly<IdObject<KE>>,  // Value Entry
@@ -39,17 +39,17 @@ export declare interface GroupObjectType<
   new(id: KG): VG;
 }
 
-export abstract class GroupObject<T extends IdObject<KE>, KG = string, KE = string> implements IdObject<KG> {
-  constructor(public id: KG) { }
+export interface GroupObject<T extends IdObject<KE>, KG = string, KE = string> extends IdObject<KG> {
+
   /**
    * Adds a member to the GroupObject
    */
-  abstract add(idObject: T): void;
+  add(idObject: T): void;
   /**
    * Removes a member from the GroupObject,
    * should return _true_ if the remaining group is not empty, _false_ if it is
    */
-  abstract remove(idObject: T): boolean;
+  remove(idObject: T): boolean;
 }
 
 export interface ReadonlyDeltaMap<K, V> extends ReadonlyMap<K, V> {

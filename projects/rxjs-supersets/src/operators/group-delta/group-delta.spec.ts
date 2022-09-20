@@ -7,10 +7,15 @@ import { groupDelta } from './group-delta';
 
 interface TestIdObject extends IdObject {
   group: number;
+  inGroup?: boolean;
 }
 
-class TestGroupObject extends GroupObject<TestIdObject, number> {
+class TestGroupObject implements GroupObject<TestIdObject, number> {
   public map = new Map<string, TestIdObject>();
+
+  constructor(
+    public id: number
+  ) { }
 
   add(entry: TestIdObject) {
     this.map.set(entry.id, entry);
@@ -18,12 +23,16 @@ class TestGroupObject extends GroupObject<TestIdObject, number> {
 
   remove(entry: TestIdObject): boolean {
     this.map.delete(entry.id);
-    return this.map.size > 0;   
+    return this.map.size > 0;
   }
 }
 
 function createGroupId(entry: TestIdObject): number {
   return entry.group;
+}
+
+function putInGroup(entry: TestIdObject): boolean {
+  return entry.inGroup ?? true;
 }
 
 describe('groupDelta operator', () => {
@@ -35,7 +44,7 @@ describe('groupDelta operator', () => {
     results = [];
     deltaSet = new DeltaSet();
     subscription = deltaSet.delta$.pipe(
-      groupDelta(TestGroupObject, createGroupId),
+      groupDelta(TestGroupObject, createGroupId, putInGroup),
     ).subscribe(result => results.push(result));
   });
 
@@ -44,15 +53,15 @@ describe('groupDelta operator', () => {
   });
 
   it('should add an element to a group', () => {
-    deltaSet.add({id: '1', group: 1});
+    deltaSet.add({ id: '1', group: 1 });
     expect(results.length).toBe(1);
     expect(results[0].added.get(1)).toBeDefined();
   });
 
   it('should add multiple elements to a group', () => {
-    deltaSet.add({id: '1a', group: 1});
+    deltaSet.add({ id: '1a', group: 1 });
     results = [];
-    deltaSet.add({id: '1b', group: 1});
+    deltaSet.add({ id: '1b', group: 1 });
 
     // group added in the first update, element added in the second update
     const group1 = results[0].modified.get(1);
@@ -61,9 +70,9 @@ describe('groupDelta operator', () => {
   });
 
   it('should update the same element the same group', () => {
-    deltaSet.add({id: '1', group: 1});
+    deltaSet.add({ id: '1', group: 1 });
     results = [];
-    deltaSet.add({id: '1', group: 1});
+    deltaSet.add({ id: '1', group: 1 });
 
     // group added in the first update, element modified in the second update
     const group1 = results[0].modified.get(1);
@@ -72,9 +81,9 @@ describe('groupDelta operator', () => {
   });
 
   it('should add elements to multiple groups', () => {
-    deltaSet.add({id: '1', group: 1});
+    deltaSet.add({ id: '1', group: 1 });
     results = [];
-    deltaSet.add({id: '2', group: 2});
+    deltaSet.add({ id: '2', group: 2 });
 
     // group added in the first update, other group added in the second update
     const group1 = results[0].added.get(2);
@@ -83,10 +92,10 @@ describe('groupDelta operator', () => {
   });
 
   it('should move an existing element to another group', () => {
-    deltaSet.add({id: '1a', group: 1});
-    deltaSet.add({id: '1b', group: 1});
+    deltaSet.add({ id: '1a', group: 1 });
+    deltaSet.add({ id: '1b', group: 1 });
     results = [];
-    deltaSet.add({id: '1b', group: 2});
+    deltaSet.add({ id: '1b', group: 2 });
 
     // group added in the first update, 
     // element added to th group in the second update
@@ -100,9 +109,9 @@ describe('groupDelta operator', () => {
   });
 
   it('should delete the group if it no longer contains elements', () => {
-    deltaSet.add({id: '1a', group: 1});
+    deltaSet.add({ id: '1a', group: 1 });
     results = [];
-    deltaSet.add({id: '1a', group: 2});
+    deltaSet.add({ id: '1a', group: 2 });
 
     // group added in the first update, 
     // element moved to other group in the second update
@@ -112,5 +121,14 @@ describe('groupDelta operator', () => {
     const group2 = results[0].added.get(2);
     expect(group2).toBeDefined();
     expect(group2?.map.size).toBe(1);
+  });
+
+  it('should only send process filtered elements', () => {
+    deltaSet.add({ id: '1', group: 1, inGroup: true });
+    expect(results.length).toBe(1);
+    expect(results[0].added.get(1)).toBeDefined();
+    results = [];
+    deltaSet.add({ id: '2', group: 2, inGroup: false });
+    expect(results.length).toBe(0);
   });
 });
