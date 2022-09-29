@@ -1,9 +1,13 @@
 # Change Log
 
-## 2.03
+## 2.1.0
+  - added `mergeDelta` function
+  - updated `processDelta` function properties `before` and `after` to have optional MapDelta parameter
+
+## 2.0.3
   - improved groupDelta filtering and type definitions
 
-## 2.02
+## 2.0.2
   - fixed rxjs map operator import bug
 ## 2.0.1
 - Fix:

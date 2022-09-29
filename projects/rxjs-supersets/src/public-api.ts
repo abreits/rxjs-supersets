@@ -7,6 +7,7 @@ export * from './delta-map/delta-map';
 export * from './delta-set/delta-set';
 export * from './simple-super-set/simple-super-set';
 export * from './super-set/super-set';
+export * from './creators/merge-delta/merge-delta';
 export * from './operators/filter-delta/filter-delta';
 export * from './operators/group-delta/group-delta';
 export * from './operators/map-delta/map-delta';

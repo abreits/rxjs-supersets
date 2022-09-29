@@ -12,11 +12,11 @@ export function processDelta<
   V extends Readonly<IdObject<K>>,
   K = string
 >(handlerFunctions?: {
-  before?: () => void,
+  before?: (delta: MapDelta<K, V>) => void,
   add?: (value: Readonly<V>) => void,
   modify?: (value: Readonly<V>) => void,
   delete?: (value: Readonly<V>) => void,
-  after?: () => void
+  after?: (delta: MapDelta<K, V>) => void
 }): (delta: DeltaObservable<K, V>) => DeltaObservable<K, V> {
   let started = false;
   return map((delta: MapDelta<K, V>) => {
@@ -32,13 +32,13 @@ export function processDelta<
     }
     if (handlerFunctions) {
       if (handlerFunctions.before) {
-        handlerFunctions.before();
+        handlerFunctions.before(delta);
       }
       handleEntries(delta.deleted, handlerFunctions.delete);
       handleEntries(delta.modified, handlerFunctions.modify);
       handleEntries(delta.added, handlerFunctions.add);
       if (handlerFunctions.after) {
-        handlerFunctions.after();
+        handlerFunctions.after(delta);
       }
     }
     return delta;

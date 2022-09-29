@@ -1,7 +1,7 @@
 import { DeltaMap } from '../../delta-map/delta-map';
 import { IdObject, MapDelta } from '../../types';
 
-import {processDelta} from './process-delta';
+import { processDelta } from './process-delta';
 
 const element1 = { id: 'element1' };
 const element2 = { id: 'element2' };
@@ -34,11 +34,11 @@ describe('processDelta', () => {
     const test = new DeltaMap<string, IdObject>();
 
     const subscription = test.delta$.pipe(processDelta({
+      before: delta => results.push(`before:${delta?.all.size}`),
       add: element => results.push(`add:${element.id}`),
       delete: element => results.push(`delete:${element.id}`),
       modify: element => results.push(`modify:${element.id}`),
-      before: () => results.push('before'),
-      after: () => results.push('after')
+      after: delta => results.push(`after:${delta?.all.size}`)
     })).subscribe();
 
     test.set(element1.id, element1);
@@ -51,7 +51,7 @@ describe('processDelta', () => {
     test.delete(element1.id);
     test.resumeDelta();
 
-    expect(results).toEqual(['before','delete:element1','modify:element2','add:element3', 'after']);
+    expect(results).toEqual(['before:2', 'delete:element1', 'modify:element2', 'add:element3', 'after:2']);
 
     subscription.unsubscribe();
   });

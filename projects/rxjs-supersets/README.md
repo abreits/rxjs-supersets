@@ -10,6 +10,7 @@ For the latest changes and the current version see the [Change log](./CHANGELOG.
 - [In detail](#in-detail)
   - [Maps and Sets](#maps-and-sets)
   - [RxJS operators](#rxjs-operators)
+  - [RxJS creators](#rxjs-creators)
   - [Utility functions](#utility-functions)
   - [DataTypes and Interfaces](#datatypes-and-interfaces)
 - [Examples](#examples)
@@ -65,6 +66,9 @@ A `processDelta` rxjs operator is provided to help processing the resulting `Map
 - [tapDelta](./src/operators/tap-delta/README.md) can create side effects for all added, modified and deleted elements of a _MapDelta_.
 - **Deprecated**: [processDelta](./src/operators/process-delta/README.md) a combination of _startDelta_ and _tapDelta_.
 
+## RxJS creators
+
+- [mergeDelta](./src/creators/merge-delta/README.md) merges multiple `MapDelta`' Observables of the same type to a single `MapDelta` Observable.
 
 ## Utility functions
 - [processElements](src/support/process-elements/README.md) allows easy processing of all elements in a `MapDelta`.

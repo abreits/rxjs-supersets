@@ -14,8 +14,8 @@ handlerFunctions?: {
   add?: (value: V) => void,
   delete?: (Value: V) => void,
   modify?: (value: V) => void,
-  before?: () => void,
-  after?: () => void
+  before?: (delta?: DeltaObservable<K, V>) => void,
+  after?: (delta?: DeltaObservable<K, V>) => void
 }
 ```
 
