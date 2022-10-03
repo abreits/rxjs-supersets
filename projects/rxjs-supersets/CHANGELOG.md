@@ -1,5 +1,8 @@
 # Change Log
 
+## 2.1.1
+  - fix removed 'tap' import from 'rxjs' (not needed and wrong import origin for older versions of rxjs)
+
 ## 2.1.0
   - added `mergeDelta` function
   - updated `processDelta` function properties `before` and `after` to have optional MapDelta parameter

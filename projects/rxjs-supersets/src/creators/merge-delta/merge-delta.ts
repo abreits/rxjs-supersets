@@ -1,4 +1,4 @@
-import { Observable, Subscription, tap, using } from 'rxjs';
+import { Observable, Subscription, using } from 'rxjs';
 import { DeltaSet, processDelta } from '../../public-api';
 
 import { IdObject, MapDelta } from '../../types';
@@ -16,7 +16,6 @@ class MergeSubscriber<K, V extends IdObject<K>> {
 
   constructor(private mergeSet: DeltaSet<V, K>, sources: Observable<MapDelta<K, V>>[]) {
     this.subscriptions = sources.map((source, index) => source.pipe(
-      tap(delta => this.sourceSets.set(index, delta.all)),
       processDelta({
         before: delta => {
           this.sourceSets.set(index, delta.all);
