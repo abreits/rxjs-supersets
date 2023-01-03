@@ -1,6 +1,6 @@
 {
   "name": "rxjs-supersets",
-  "version": "2.1.1",
+  "version": "2.1.3",
   "peerDependencies": {
     "rxjs": ">6.0.0"
   },

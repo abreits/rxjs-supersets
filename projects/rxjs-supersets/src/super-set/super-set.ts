@@ -160,8 +160,13 @@ export class SuperSet<V extends MemberObject<K, M>, K = string, M = string> exte
    */
   override deleteSubSetItems(subsetId: M): void {
     this.doPauseSubsetDeltas();
-    super.deleteSubSetItems(subsetId);
+    const subset = this.getSubSet(subsetId);
+    subset.forEach(entry => {
+      this.doDelete(entry.id);
+    });
+    this.publishDelta();
     this.doResumeSubsetDeltas();
+    subset.clear();
   }
 
   /**

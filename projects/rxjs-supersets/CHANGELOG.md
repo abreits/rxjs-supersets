@@ -1,5 +1,8 @@
 # Change Log
 
+## 2.1.3
+  - fixed delta$ updates when calling `deleteSubSetItems` in `SuperSet` 
+
 ## 2.1.1
   - fix removed 'tap' import from 'rxjs' (not needed and wrong import origin for older versions of rxjs)
 

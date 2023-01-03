@@ -113,7 +113,7 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
   }
 
   /**
-    * extend _super.doDelete_ to add subset porcessing
+    * extend _super.doDelete_ to add subset processing
     * @override
     */
   protected override doDelete(id: K): any {
@@ -147,6 +147,7 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
       this.doDelete(entry.id);
     });
     subset.clear();
+    this.publishDelta();
   }
 
   /**
@@ -157,5 +158,6 @@ export class SimpleSuperSet<V extends MemberObject<K, M>, K = string, M = string
   protected deleteSubSet(subsetId: M): void {
     this.emptySubSet(subsetId);
     this._subsets.delete(subsetId);
+    this.publishDelta();
   }
 }

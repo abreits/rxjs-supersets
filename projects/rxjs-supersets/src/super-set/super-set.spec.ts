@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Subscription } from 'rxjs';
+import { first, skip, Subscription } from 'rxjs';
 
 import { tapDelta } from '../operators/tap-delta/tap-delta';
 import { MemberObject, DeltaObservable, MapDelta } from '../types';
@@ -257,6 +257,47 @@ describe('SuperSet', () => {
       expect(test.get('content0')).not.toBeDefined();
       expect(test.get('content1')).not.toBeDefined();
       expect(test.get('content2')).toBeDefined();
+    });
+
+    it('should publish the deleted subset entries to delta$', done => {
+      test = new SuperSet();
+      const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
+      test.add(testContent);
+      const testContent2 = createContent({ id: 'content1', memberOf: ['SubSet1', 'SubSet2'] });
+      test.add(testContent2);
+      const testContent3 = createContent({ id: 'content2', memberOf: ['SubSet2'] });
+      test.add(testContent3);
+
+      // just take the second value (first is the addition, second is the deleteSubSetItems)
+      test.delta$.pipe(skip(1),first()).subscribe(delta => {
+        expect(delta.deleted.size).toBe(2);
+        expect(delta.deleted.get('content0')).toBe(testContent);
+        expect(delta.deleted.get('content1')).toBe(testContent2);
+        done();
+      });
+
+      test.deleteSubSetItems('SubSet1');
+    });
+
+    it('should publish the deleted subset entries to the subset delta$', done => {
+      test = new SuperSet();
+      const testContent = createContent({ id: 'content0', memberOf: ['SubSet1'] });
+      test.add(testContent);
+      const testContent2 = createContent({ id: 'content1', memberOf: ['SubSet1', 'SubSet2'] });
+      test.add(testContent2);
+      const testContent3 = createContent({ id: 'content2', memberOf: ['SubSet2'] });
+      test.add(testContent3);
+
+      test.subsets.get('SubSet1').delta$.subscribe(delta => console.log('delta',delta));
+      // just take the second value (first is the addition, second is the deleteSubSetItems)
+      test.subsets.get('SubSet1').delta$.pipe(skip(1),first()).subscribe(delta => {
+        expect(delta.deleted.size).toBe(2);
+        expect(delta.deleted.get('content0')).toBe(testContent);
+        expect(delta.deleted.get('content1')).toBe(testContent2);
+        done();
+      });
+
+      test.deleteSubSetItems('SubSet1');
     });
   });
 
