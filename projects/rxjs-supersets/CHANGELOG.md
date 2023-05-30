@@ -1,5 +1,8 @@
 # Change Log
 
+## 2.2.0
+  - removed Readonly<> from Delta because it generates more problems than it solves
+
 ## 2.1.3
   - fixed delta$ updates when calling `deleteSubSetItems` in `SuperSet` 
 

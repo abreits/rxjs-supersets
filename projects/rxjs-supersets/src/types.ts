@@ -19,7 +19,7 @@ export interface MemberObject<K = string, C = string> extends IdObject<K> {
 }
 
 export interface GroupDeltaSettings<
-  VE extends Readonly<IdObject<KE>>,  // Value Entry
+  VE extends IdObject<KE>,  // Value Entry
   VG extends GroupObject<VE, KG, KE>, // Value Group
   KE = string,                        // Key Entry
   KG = string                         // Key Group
@@ -31,7 +31,7 @@ export interface GroupDeltaSettings<
 
 
 export declare interface GroupObjectType<
-  VE extends Readonly<IdObject<KE>>,  // Value Entry
+  VE extends IdObject<KE>,  // Value Entry
   VG extends GroupObject<VE, KG, KE>, // Value Group
   KE = string,                        // Key Entry
   KG = string                         // Key Group
@@ -68,10 +68,10 @@ export interface SubsetMap<K, V> extends SimpleSubsetMap<K, V> {
 }
 
 export interface MapDelta<K, V> {
-  all: ReadonlyMap<K, Readonly<V>>;
-  added: ReadonlyMap<K, Readonly<V>>;
-  deleted: ReadonlyMap<K, Readonly<V>>;
-  modified: ReadonlyMap<K, Readonly<V>>;
+  all: ReadonlyMap<K, V>;
+  added: ReadonlyMap<K, V>;
+  deleted: ReadonlyMap<K, V>;
+  modified: ReadonlyMap<K, V>;
 }
 
 export type DeltaObservable<K, V> = Observable<MapDelta<K, V>>

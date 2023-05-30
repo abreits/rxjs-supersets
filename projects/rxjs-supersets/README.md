@@ -33,10 +33,10 @@ The content changes are published in `MapDelta` format:
 
 ``` typescript
 export interface MapDelta<K, V> {
-  all: ReadonlyMap<K, Readonly<V>>;
-  added: ReadonlyMap<K, Readonly<V>>;
-  deleted: ReadonlyMap<K, Readonly<V>>;
-  modified: ReadonlyMap<K, Readonly<V>>;
+  all: ReadonlyMap<K, V>;
+  added: ReadonlyMap<K, V>;
+  deleted: ReadonlyMap<K, V>;
+  modified: ReadonlyMap<K, V>;
 }
 ```
 
